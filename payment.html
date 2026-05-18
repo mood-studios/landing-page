@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/img/mood_logo.png" />
+  <title>Complete payment — Mood Studios</title>
+  <link rel="stylesheet" href="/css/book.css" />
+</head>
+<body class="payment-page">
+  <header class="app-nav">
+    <div class="app-nav-inner">
+      <a href="/dashboard.html" class="brand-link">
+        <img src="/img/mood_logo.png" alt="Mood Studios" />
+        Mood Studios
+      </a>
+      <div class="nav-actions">
+        <button type="button" class="btn btn-ghost" id="logoutBtn">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="payment-main">
+    <p id="paymentQueueHint" class="payment-queue-hint hidden"></p>
+
+    <div class="payment-amount-card">
+      <div class="payment-amount-icon" aria-hidden="true">💳</div>
+      <p class="payment-amount-label">Amount to pay</p>
+      <p id="paymentAmount" class="payment-amount-value">₱0.00</p>
+    </div>
+
+    <div id="testModeBanner" class="payment-banner payment-banner--test hidden">
+      PayMongo TEST mode — use test cards only. No real money is charged.
+    </div>
+
+    <div id="linkErrorBanner" class="payment-banner payment-banner--warn hidden"></div>
+
+    <p class="payment-steps">
+      1. Open PayMongo and pay (GCash, Maya, card)<br />
+      2. Return here and confirm
+    </p>
+
+    <div id="paymentActions" class="payment-actions">
+      <button type="button" id="openPaymongoBtn" class="btn btn-purple payment-btn" disabled>
+        Continue to PayMongo
+      </button>
+      <button type="button" id="confirmPaidBtn" class="btn btn-ghost payment-btn" disabled>
+        I've completed payment
+      </button>
+      <button type="button" id="testConfirmBtn" class="btn btn-text hidden" disabled>
+        Skip — mark as paid (test only)
+      </button>
+    </div>
+
+    <details class="payment-test-cards">
+      <summary>Test card numbers</summary>
+      <p>
+        Visa (success): 4343 4343 4343 4345<br />
+        Expiry: any future date · CVC: any 3 digits<br />
+        <a href="https://developers.paymongo.com/docs/testing" target="_blank" rel="noopener">developers.paymongo.com/docs/testing</a>
+      </p>
+    </details>
+
+    <a href="/dashboard.html" class="btn btn-ghost payment-back">Back to dashboard</a>
+  </main>
+
+  <script type="module" src="/js/payment.js"></script>
+</body>
+</html>
+

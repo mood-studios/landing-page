@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/img/mood_logo.png" />
+  <title>Mood Studios — Capture Your Perfect Mood</title>
+  <link rel="stylesheet" href="/css/landing.css" />
+  <link rel="stylesheet" href="/css/book.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
+<body>
+  <header class="nav nav--visible" id="nav">
+    <a href="#home" class="nav-brand">
+      <img src="/img/mood_logo.png" alt="Mood Studios" />
+      Mood Studios
+    </a>
+    <ul class="nav-links">
+      <li><a href="#home" data-section="home">Home</a></li>
+      <li><a href="#packages" data-section="packages">Packages</a></li>
+      <li><a href="#how-it-works" data-section="how-it-works">How it works</a></li>
+      <li><a href="#contact" data-section="contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <span class="nav-greeting hidden" data-user-greeting></span>
+      <a href="/dashboard.html" class="btn btn-ghost nav-dashboard hidden">Dashboard</a>
+      <button type="button" class="btn btn-ghost auth-open-login" data-auth-open="login">Log in</button>
+      <button type="button" class="btn btn-ghost auth-open-logout hidden">Log out</button>
+      <a href="#packages" class="btn btn-purple">Book now</a>
+    </div>
+    <button class="hamburger" type="button" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#home" data-section="home">Home</a>
+    <a href="#packages" data-section="packages">Packages</a>
+    <a href="#how-it-works" data-section="how-it-works">How it works</a>
+    <a href="#contact" data-section="contact">Contact</a>
+    <a href="/dashboard.html" class="nav-dashboard hidden">Dashboard</a>
+    <button type="button" class="mobile-menu-auth auth-open-login" data-auth-open="login">Log in</button>
+    <button type="button" class="mobile-menu-auth" data-auth-open="register">Sign up</button>
+    <a href="#packages" class="nav-mobile-cta">Book now →</a>
+  </div>
+
+  <section class="hero" id="home">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-badge" id="hero-badge">
+          <div class="hero-badge-dot"></div>
+          Bacoor, Cavite · Now booking
+        </div>
+        <h1 class="hero-h1" id="hero-h1">Capture Your<br><em>Perfect Mood</em></h1>
+        <p class="hero-sub" id="hero-sub">
+          Celebrate your story today. Whether you're marking a milestone, cherishing time with family, or simply treating yourself — we make every frame timeless.
+        </p>
+        <div class="hero-ctas" id="hero-ctas">
+          <a href="#packages" class="btn btn-purple">Book a session</a>
+          <button type="button" class="btn btn-pink" data-auth-open="login">Log in</button>
+        </div>
+      </div>
+
+      <div class="hero-visual" id="hero-visual">
+        <div class="hero-card">
+          <div class="hero-card-photo">
+            <img src="/img/frontImage.jpg" alt="Mood Studios session" />
+          </div>
+          <div class="hero-card-info">
+            <div>
+              <p class="hero-card-title">Studio Sessions</p>
+              <p class="hero-card-sub">Available all week</p>
+            </div>
+            <div class="hero-card-avatar">MS</div>
+          </div>
+        </div>
+        <div class="pill pill-star">⭐ 5.0 rating</div>
+        <div class="pill pill-check">✓ 200+ happy clients</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker">
+    <div class="ticker-track">
+      <span>✦ <b>Keepsake</b> · from ₱650</span>
+      <span>✦ <b>Euphoria Pro</b> · family moments</span>
+      <span>✦ <b>Photographer Session</b> · glam & maternity</span>
+      <span>✦ <b>Self Portrait Pro</b> · prints included</span>
+      <span>✦ <b>Keepsake</b> · from ₱650</span>
+      <span>✦ <b>Euphoria Pro</b> · family moments</span>
+      <span>✦ <b>Photographer Session</b> · glam & maternity</span>
+      <span>✦ <b>Self Portrait Pro</b> · prints included</span>
+    </div>
+  </div>
+
+  <div id="packages" style="background: var(--bg);">
+    <div class="section-wrap">
+      <p class="tag reveal">What we offer</p>
+      <h2 class="section-h2 reveal">Sessions for every moment</h2>
+      <p class="section-sub reveal">From solo portraits to photographer-led shoots — every package is crafted with heart.</p>
+      <div class="category-tabs" id="categoryTabs"></div>
+      <div class="services-grid" id="packageContainer">
+        <p class="packages-loading">Loading packages…</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-wrap" style="padding-top:0">
+    <div class="stats-banner reveal">
+      <div><div class="stat-val">200+</div><div class="stat-lbl">Happy clients</div></div>
+      <div><div class="stat-val">5.0★</div><div class="stat-lbl">Average rating</div></div>
+      <div><div class="stat-val">3 yrs</div><div class="stat-lbl">In business</div></div>
+      <div><div class="stat-val">12+</div><div class="stat-lbl">Packages</div></div>
+    </div>
+  </div>
+
+  <div id="how-it-works" style="background: var(--bg);">
+    <div class="section-wrap">
+      <p class="tag reveal">How it works</p>
+      <h2 class="section-h2 reveal">Five simple steps</h2>
+      <p class="section-sub reveal">Booking your dream session has never been easier.</p>
+      <div class="steps">
+        <div class="step reveal"><div class="step-num">01</div><div class="step-body"><h4>Choose your package</h4><p>Browse packages and pick what fits your style and budget.</p></div></div>
+        <div class="step reveal"><div class="step-num">02</div><div class="step-body"><h4>Log in or sign up</h4><p>Create an account to save details and manage bookings.</p></div></div>
+        <div class="step reveal"><div class="step-num">03</div><div class="step-body"><h4>Pick date & time</h4><p>Select an available slot and confirm your session.</p></div></div>
+        <div class="step reveal"><div class="step-num">04</div><div class="step-body"><h4>Secure your booking</h4><p>Pay online to reserve your date instantly.</p></div></div>
+        <div class="step reveal"><div class="step-num">05</div><div class="step-body"><h4>Show up & smile</h4><p>Visit our Bacoor studio — we handle the rest.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-wrap" id="contact" style="padding-top:0;padding-bottom:4rem">
+    <div class="cta-block reveal">
+      <h2 class="section-h2">Ready to capture your moment?</h2>
+      <p>Book your session today and let us make it unforgettable.</p>
+      <a href="#packages" class="btn btn-purple" style="font-size:15px;padding:14px 36px">Book a session</a>
+    </div>
+  </div>
+
+  <footer>© 2026 Mood Studios · Bacoor, Cavite · All rights reserved</footer>
+
+  <button type="button" class="cart-fab" id="cartFab" aria-label="Open cart">
+    <img src="/icons/cart.svg" alt="" width="22" height="22" />
+    <span class="cart-fab-count hidden" id="cartFabCount" data-cart-count>0</span>
+  </button>
+
+  <div id="cartMessage" class="cart-toast success hidden"></div>
+  <div id="overlay" class="hidden" onclick="toggleCart()"></div>
+
+  <aside id="cartSidebar">
+    <div class="cart-header">
+      <h2>Your Cart <span id="cartCount">0 items</span></h2>
+      <button type="button" onclick="toggleCart()" aria-label="Close">×</button>
+    </div>
+    <div class="cart-select-row">
+      <input type="checkbox" id="selectAllChk" onchange="toggleSelectAll()" />
+      <label for="selectAllChk">Select all</label>
+      <span id="selectedCount"></span>
+    </div>
+    <div id="cartContainer"></div>
+    <div class="cart-footer">
+      <div class="row"><span>Subtotal</span><span id="cartSubtotal">₱0.00</span></div>
+      <div class="total"><span>Total</span><span id="cartTotal">₱0.00</span></div>
+      <button type="button" id="checkoutBtn" class="btn btn-purple" style="width:100%;padding:.75rem" disabled>Proceed to Checkout</button>
+    </div>
+  </aside>
+
+  <div id="authModal" class="auth-modal hidden" aria-hidden="true" role="dialog" aria-labelledby="authModalTitle">
+    <div class="auth-modal-backdrop" data-auth-close></div>
+    <div class="auth-modal-dialog">
+      <button type="button" class="auth-modal-close" data-auth-close aria-label="Close">&times;</button>
+      <img src="/img/mood_logo.png" alt="" class="auth-logo" style="margin:0 auto .75rem;display:block;width:4rem;height:4rem" />
+      <h2 id="authModalTitle" class="auth-modal-title">Log in</h2>
+      <p class="auth-modal-sub">Sign in to book and manage your sessions</p>
+
+      <section class="auth-card" data-auth-panel="login">
+        <form id="loginForm">
+          <div class="form-field">
+            <label for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" required autocomplete="email" />
+          </div>
+          <div class="form-field">
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" required autocomplete="current-password" />
+          </div>
+          <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Log in</button>
+          <p class="auth-switch">
+            No account? <a href="#" id="showRegister">Sign up</a>
+          </p>
+        </form>
+      </section>
+
+      <section class="auth-card hidden" data-auth-panel="register">
+        <form id="registerForm">
+          <div class="form-field"><label for="regName">Full name</label><input id="regName" required /></div>
+          <div class="form-field"><label for="regEmail">Email</label><input id="regEmail" type="email" required /></div>
+          <div class="form-field"><label for="regPhone">Phone</label><input id="regPhone" type="tel" required placeholder="09171234567" /></div>
+          <div class="form-field"><label for="regPassword">Password</label><input id="regPassword" type="password" required minlength="8" /></div>
+          <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Create account</button>
+          <p class="auth-switch">
+            Have an account? <a href="#" id="showLogin">Log in</a>
+          </p>
+        </form>
+      </section>
+
+      <section class="auth-card hidden" data-auth-panel="otp">
+        <form id="otpForm">
+          <p class="auth-otp-hint">Enter the verification code sent to your email.</p>
+          <input type="hidden" id="otpEmail" />
+          <div class="form-field"><label for="otpCode">OTP code</label><input id="otpCode" required maxlength="6" /></div>
+          <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Verify email</button>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <script type="module" src="/js/landing.js"></script>
+</body>
+</html>

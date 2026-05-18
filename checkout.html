@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/img/mood_logo.png" />
+  <title>Checkout — Mood Studios</title>
+  <link rel="stylesheet" href="/css/book.css" />
+</head>
+<body class="checkout-page">
+  <header class="app-nav">
+    <div class="app-nav-inner">
+      <a href="/dashboard.html" class="brand-link">
+        <img src="/img/mood_logo.png" alt="Mood Studios" />
+        Mood Studios
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/dashboard.html#book">Book session</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions">
+        <button type="button" class="btn btn-ghost" id="logoutBtn">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main checkout-page-main">
+    <div class="checkout-grid">
+      <div class="checkout-main">
+        <section class="panel checkout-panel">
+          <h2 class="checkout-panel-title">Your sessions</h2>
+          <div id="checkOutCartContainer" class="checkout-items"></div>
+        </section>
+
+        <section class="panel checkout-panel">
+          <h2 class="checkout-panel-title">Contact information</h2>
+          <form id="contactForm" class="checkout-contact-form" onsubmit="return false;">
+            <div class="checkout-form-grid">
+              <div class="form-field">
+                <label for="fullName">Full name *</label>
+                <input id="fullName" type="text" required placeholder="Juan Dela Cruz" />
+              </div>
+              <div class="form-field">
+                <label for="email">Email *</label>
+                <input id="email" type="email" required placeholder="juan@example.com" />
+              </div>
+              <div class="form-field checkout-form-full">
+                <label for="phone">Phone *</label>
+                <input id="phone" type="tel" required placeholder="+63 912 345 6789" />
+              </div>
+              <div class="form-field checkout-form-full">
+                <label for="notes">Special requests</label>
+                <textarea id="notes" rows="3" placeholder="Optional notes for your session"></textarea>
+              </div>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <aside class="panel checkout-summary">
+        <h2 class="checkout-panel-title">Order summary</h2>
+        <div class="checkout-summary-rows">
+          <div class="checkout-summary-row">
+            <span>Subtotal</span>
+            <span id="subtotal">₱0.00</span>
+          </div>
+          <div class="checkout-summary-row checkout-summary-total">
+            <span>Total</span>
+            <span id="total">₱0.00</span>
+          </div>
+        </div>
+        <p class="checkout-summary-note">
+          You'll confirm your booking, then pay securely via PayMongo (GCash, Maya, card).
+        </p>
+        <button type="button" id="completeBookingBtn" class="btn btn-purple checkout-submit-btn">
+          Confirm booking
+        </button>
+        <a href="/dashboard.html#book" class="btn btn-ghost checkout-back-btn">Go back</a>
+      </aside>
+    </div>
+  </main>
+
+  <script type="module" src="/js/checkout.js"></script>
+</body>
+</html>
+
