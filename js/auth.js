@@ -1,11 +1,12 @@
-import { authApi, userApi } from './api.js';
+import { authApi, userApi, setAuthToken } from './api.js';
 
 let currentUser = null;
 let sessionPromise = null;
 
 function userFromAuthData(data) {
   if (!data) return null;
-  const { token: _token, ...user } = data;
+  const { token, ...user } = data;
+  if (token) setAuthToken(token);
   return user;
 }
 
@@ -22,6 +23,7 @@ export async function fetchSession() {
       currentUser = res.data || null;
     } catch {
       currentUser = null;
+      setAuthToken(null);
     }
     return currentUser;
   })();
@@ -95,8 +97,9 @@ export async function logout() {
   try {
     await authApi.logout();
   } catch {
-    /* cookie cleared or session already expired */
+    /* session cleared or already expired */
   }
+  setAuthToken(null);
   currentUser = null;
   window.location.href = '/';
 }

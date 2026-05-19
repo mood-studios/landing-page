@@ -1,7 +1,30 @@
 import { API_BASE } from './config.js';
 
+const TOKEN_KEY = 'mood_auth_token';
+
+/** JWT for cross-origin production (cookies are not sent vercel.app → onrender.com). */
+export function getAuthToken() {
+  try {
+    return sessionStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setAuthToken(token) {
+  try {
+    if (token) sessionStorage.setItem(TOKEN_KEY, token);
+    else sessionStorage.removeItem(TOKEN_KEY);
+  } catch {
+    /* sessionStorage unavailable */
+  }
+}
+
 export function apiHeaders(extra = {}) {
-  return { 'Content-Type': 'application/json', ...extra };
+  const headers = { 'Content-Type': 'application/json', ...extra };
+  const token = getAuthToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
 }
 
 export async function apiFetch(path, options = {}) {

@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
-import { chatApi } from './api.js';
+import { chatApi, getAuthToken } from './api.js';
 import { SOCKET_URL } from './config.js';
 import { getUser } from './auth.js';
 
@@ -92,7 +92,11 @@ function joinStudioRoom() {
 function connectSocket() {
   if (socket?.connected) return socket;
 
+  const token = getAuthToken();
+  if (!token) return null;
+
   socket = io(SOCKET_URL || window.location.origin, {
+    auth: { token },
     withCredentials: true,
     transports: ['websocket', 'polling'],
     reconnection: true,
