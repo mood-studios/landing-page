@@ -533,6 +533,23 @@
 
 .auth-switch a { color: var(--purple, #7c3aed); }
 
+.auth-email-verify__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.auth-email-verify__row input {
+  flex: 1 1 8rem;
+  min-width: 0;
+}
+
+.auth-email-verify__status {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+}
+
 .auth-otp-hint {
   font-size: 0.85rem;
   color: var(--muted, #6b7280);

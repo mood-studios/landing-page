@@ -43,6 +43,13 @@ export const authApi = {
   me: () => apiFetch('/auth/me'),
   login: (email, password) =>
     apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+  sendSignupOtp: (email) =>
+    apiFetch('/auth/send-signup-otp', { method: 'POST', body: JSON.stringify({ email }) }),
+  verifySignupOtp: (email, otp) =>
+    apiFetch('/auth/verify-signup-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email, otp }),
+    }),
   register: (body) =>
     apiFetch('/auth/register', { method: 'POST', body: JSON.stringify(body) }),
   resendOtp: (email) =>

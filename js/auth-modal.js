@@ -2,6 +2,8 @@ import { DASHBOARD_PATH } from './config.js';
 import {
   login,
   register,
+  sendSignupOtp,
+  verifySignupOtp,
   verifyOtp,
   resendOtp,
   getUser,
@@ -19,6 +21,7 @@ import {
 
 let onSuccessCallback = null;
 let resendCooldownTimer = null;
+let isSignupEmailVerified = false;
 
 const OTP_SPAM_NOTE =
   "If you don't see it within a minute, check your Spam or Promotions folder. Mark the email as Not spam so the next code goes to your inbox.";
@@ -46,7 +49,63 @@ function showPanel(id) {
   }
 
   if (id === 'register') {
+    isSignupEmailVerified = false;
+    const status = document.getElementById('signupEmailVerifyStatus');
+    if (status) status.textContent = '';
     requestAnimationFrame(() => mountRegisterRecaptcha());
+  }
+}
+
+function setSignupVerifyStatus(text, color) {
+  const el = document.getElementById('signupEmailVerifyStatus');
+  if (!el) return;
+  el.textContent = text;
+  if (color) el.style.color = color;
+}
+
+async function handleSendSignupOtp() {
+  const email = document.getElementById('regEmail')?.value.trim();
+  if (!email || !email.includes('@')) {
+    await showAlert('Enter a valid email first.', { variant: 'error' });
+    return;
+  }
+
+  isSignupEmailVerified = false;
+  setSignupVerifyStatus('Sending code…', '#7a0cd4');
+
+  try {
+    await sendSignupOtp(email);
+    setSignupVerifyStatus('Code sent. Check your email.', '#2e7d32');
+    document.getElementById('regEmailOtp')?.focus();
+  } catch (err) {
+    setSignupVerifyStatus(err.message || 'Could not send code', '#c62828');
+  }
+}
+
+async function handleVerifySignupOtp() {
+  const email = document.getElementById('regEmail')?.value.trim();
+  const otp = document.getElementById('regEmailOtp')?.value.trim().replace(/\D/g, '');
+  if (!email || !email.includes('@')) {
+    await showAlert('Enter a valid email first.', { variant: 'error' });
+    return;
+  }
+  if (!/^\d{6}$/.test(otp)) {
+    await showAlert('Enter the 6-digit code from your email.', { variant: 'error' });
+    return;
+  }
+
+  setSignupVerifyStatus('Verifying…', '#7a0cd4');
+
+  try {
+    await verifySignupOtp(email, otp);
+    isSignupEmailVerified = true;
+    setSignupVerifyStatus('Email verified ✓', '#2e7d32');
+    document.getElementById('sendSignupOtpBtn')?.setAttribute('disabled', 'true');
+    document.getElementById('verifySignupOtpBtn')?.setAttribute('disabled', 'true');
+    document.getElementById('regEmailOtp')?.setAttribute('disabled', 'true');
+  } catch (err) {
+    isSignupEmailVerified = false;
+    setSignupVerifyStatus(err.message || 'Invalid code', '#c62828');
   }
 }
 
@@ -188,6 +247,15 @@ async function handleRegister(e) {
   const btn = e.target.querySelector('button[type="submit"]');
   btn.disabled = true;
 
+  if (!isSignupEmailVerified) {
+    await showAlert('Please verify your email with the code we sent before creating your account.', {
+      title: 'Email not verified',
+      variant: 'error',
+    });
+    btn.disabled = false;
+    return;
+  }
+
   if (isRecaptchaEnabled() && !recaptchaToken) {
     await showAlert('Please complete the reCAPTCHA check.', { variant: 'error' });
     btn.disabled = false;
@@ -196,14 +264,7 @@ async function handleRegister(e) {
 
   try {
     await register({ name, email, password, phone, recaptchaToken });
-    showPanel('otp');
-    document.getElementById('otpEmail').value = email;
-    updateOtpHint(email);
-    setResendCooldown(60);
-    await showAlert(emailSentAlertMessage(email), {
-      title: 'Check your email',
-      variant: 'success',
-    });
+    finishAuth();
   } catch (err) {
     resetRegisterRecaptcha();
     await showAlert(err.message, { title: 'Sign up failed', variant: 'error' });
@@ -277,6 +338,8 @@ export function initAuthModal() {
 
   document.getElementById('loginForm')?.addEventListener('submit', handleLogin);
   document.getElementById('registerForm')?.addEventListener('submit', handleRegister);
+  document.getElementById('sendSignupOtpBtn')?.addEventListener('click', handleSendSignupOtp);
+  document.getElementById('verifySignupOtpBtn')?.addEventListener('click', handleVerifySignupOtp);
   document.getElementById('otpForm')?.addEventListener('submit', handleOtp);
   document.getElementById('resendOtpBtn')?.addEventListener('click', handleResendOtp);
 

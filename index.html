@@ -198,6 +198,15 @@
         <form id="registerForm">
           <div class="form-field"><label for="regName">Full name</label><input id="regName" required /></div>
           <div class="form-field"><label for="regEmail">Email</label><input id="regEmail" type="email" required /></div>
+          <div class="form-field auth-email-verify">
+            <label for="regEmailOtp">Email verification code</label>
+            <div class="auth-email-verify__row">
+              <input id="regEmailOtp" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
+              <button type="button" id="sendSignupOtpBtn" class="btn btn-ghost btn--sm">Send code</button>
+              <button type="button" id="verifySignupOtpBtn" class="btn btn-ghost btn--sm">Verify</button>
+            </div>
+            <p id="signupEmailVerifyStatus" class="auth-email-verify__status muted" aria-live="polite"></p>
+          </div>
           <div class="form-field"><label for="regPhone">Phone</label><input id="regPhone" type="tel" required placeholder="09171234567" /></div>
           <div class="form-field"><label for="regPassword">Password</label><input id="regPassword" type="password" required minlength="8" /></div>
           <div class="form-field auth-recaptcha-wrap hidden">

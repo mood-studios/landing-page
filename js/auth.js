@@ -55,6 +55,14 @@ export async function login(email, password) {
   return currentUser;
 }
 
+export async function sendSignupOtp(email) {
+  await authApi.sendSignupOtp(email);
+}
+
+export async function verifySignupOtp(email, otp) {
+  await authApi.verifySignupOtp(email, otp);
+}
+
 export async function register({ name, email, password, phone, recaptchaToken }) {
   const res = await authApi.register({
     name,
@@ -63,7 +71,8 @@ export async function register({ name, email, password, phone, recaptchaToken })
     phone,
     recaptchaToken,
   });
-  return res.data;
+  currentUser = userFromAuthData(res.data);
+  return currentUser;
 }
 
 export async function resendOtp(email) {
