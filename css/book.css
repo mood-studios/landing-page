@@ -536,7 +536,56 @@
 .auth-otp-hint {
   font-size: 0.85rem;
   color: var(--muted, #6b7280);
+  margin-bottom: 0.65rem;
+}
+
+.auth-otp-spam-note {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.75rem;
   margin-bottom: 1rem;
+}
+
+.auth-otp-spam-note strong {
+  color: #78350f;
+}
+
+.auth-otp-resend {
+  text-align: center;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted, #6b7280);
+}
+
+.auth-link-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--purple, #960ffa);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.auth-link-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.auth-recaptcha-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 0.25rem 0 0.5rem;
+}
+
+.auth-recaptcha {
+  min-height: 78px;
 }
 
 body.auth-modal-open { overflow: hidden; }

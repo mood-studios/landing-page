@@ -9,6 +9,7 @@ import {
 } from './cart.js';
 import { getUser, requireAuth, syncProfileFields } from './auth.js';
 import { initNav } from './nav.js';
+import { showAlert, showConfirm } from './app-dialog.js';
 
 const availabilityCache = {};
 
@@ -55,12 +56,12 @@ window.updateDate = function updateDate(cartIndex, value, unitIndex = 0) {
   const maxDate = maxObj.toISOString().split('T')[0];
 
   if (value < today) {
-    alert('You cannot select a past date.');
+    showAlert('You cannot select a past date.', { variant: 'error' });
     loadCheckoutCart();
     return;
   }
   if (value > maxDate) {
-    alert('Please select a date within the next 3 months.');
+    showAlert('Please select a date within the next 3 months.', { variant: 'error' });
     loadCheckoutCart();
     return;
   }
@@ -81,7 +82,7 @@ window.updateTime = function updateTime(cartIndex, value, unitIndex = 0) {
   const schedule = item?.schedules?.[unitIndex];
 
   if (!schedule?.date) {
-    alert('Please select a date first.');
+    showAlert('Please select a date first.', { variant: 'error' });
     return;
   }
 
@@ -93,7 +94,7 @@ window.updateTime = function updateTime(cartIndex, value, unitIndex = 0) {
   );
 
   if (duplicate) {
-    alert('This date and time is already used by another item in your cart.');
+    showAlert('This date and time is already used by another item in your cart.', { variant: 'error' });
     schedule.time = '';
     saveCart(cart);
     loadCheckoutCart();
@@ -126,8 +127,8 @@ window.updateTime = function updateTime(cartIndex, value, unitIndex = 0) {
     });
 };
 
-window.removeCheckoutFromCart = function removeCheckoutFromCart(index, unitIndex = null) {
-  if (!confirm('Remove this item from checkout?')) return;
+window.removeCheckoutFromCart = async function removeCheckoutFromCart(index, unitIndex = null) {
+  if (!(await showConfirm('Remove this item from checkout?', { confirmText: 'Remove', variant: 'error' }))) return;
   const cart = getCart();
   if (unitIndex === null) {
     cart.splice(index, 1);
@@ -239,11 +240,11 @@ function fillContactForm() {
 async function completeBooking() {
   const entries = getSelectedCartItems();
   if (!entries.length) {
-    alert('No items selected for checkout.');
+    await showAlert('No items selected for checkout.', { variant: 'error' });
     return;
   }
   if (!validateCart(entries)) {
-    alert('Please select a date and time for every session.');
+    await showAlert('Please select a date and time for every session.', { variant: 'error' });
     return;
   }
 
@@ -253,13 +254,13 @@ async function completeBooking() {
   const notes = document.getElementById('notes')?.value.trim() || '';
 
   if (!fullName || !email || !phone) {
-    alert('Please complete contact information.');
+    await showAlert('Please complete contact information.', { variant: 'error' });
     return;
   }
 
   const normalizedPhone = phone.replace(/[\s\-().]/g, '');
   if (!/^(\+?63|0)9\d{9}$/.test(normalizedPhone)) {
-    alert('Enter a valid Philippine mobile number (e.g. 09171234567).');
+    await showAlert('Enter a valid Philippine mobile number (e.g. 09171234567).', { variant: 'error' });
     return;
   }
 
@@ -304,7 +305,10 @@ async function completeBooking() {
     sessionStorage.removeItem('mood_payment_total');
     window.location.href = '/payment.html';
   } catch (err) {
-    alert(err.message || 'Booking failed. Please try again.');
+    await showAlert(err.message || 'Booking failed. Please try again.', {
+      title: 'Booking failed',
+      variant: 'error',
+    });
     btn.disabled = false;
     btn.textContent = 'Confirm booking';
   }

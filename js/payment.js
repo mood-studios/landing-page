@@ -1,6 +1,7 @@
 import { paymentApi } from './api.js';
 import { requireAuth, logout, fetchSession } from './auth.js';
 import { formatMoney } from './cart.js';
+import { showAlert } from './app-dialog.js';
 
 const CHECKOUT_KEY = 'mood_checkout_payment';
 const SESSION_KEY = 'mood_payment_session';
@@ -173,7 +174,7 @@ async function confirmPaid(testConfirm = false) {
     sessionStorage.removeItem('mood_payment_total');
     window.location.href = '/success.html';
   } catch (err) {
-    alert(friendlyError(err.message));
+    await showAlert(friendlyError(err.message), { title: 'Payment', variant: 'error' });
   } finally {
     busy = false;
     setBusyUi(false);
@@ -212,7 +213,7 @@ async function init() {
   try {
     await startSession();
   } catch (err) {
-    alert(friendlyError(err.message));
+    await showAlert(friendlyError(err.message), { title: 'Payment', variant: 'error' });
     window.location.href = '/dashboard.html';
   }
 }

@@ -200,6 +200,9 @@
           <div class="form-field"><label for="regEmail">Email</label><input id="regEmail" type="email" required /></div>
           <div class="form-field"><label for="regPhone">Phone</label><input id="regPhone" type="tel" required placeholder="09171234567" /></div>
           <div class="form-field"><label for="regPassword">Password</label><input id="regPassword" type="password" required minlength="8" /></div>
+          <div class="form-field auth-recaptcha-wrap hidden">
+            <div id="registerRecaptcha" class="auth-recaptcha"></div>
+          </div>
           <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Create account</button>
           <p class="auth-switch">
             Have an account? <a href="#" id="showLogin">Log in</a>
@@ -209,10 +212,21 @@
 
       <section class="auth-card hidden" data-auth-panel="otp">
         <form id="otpForm">
-          <p class="auth-otp-hint">Enter the verification code sent to your email.</p>
+          <p class="auth-otp-hint" id="otpHint">Enter the 6-digit code we sent to your email.</p>
+          <p class="auth-otp-spam-note" id="otpSpamNote">
+            <strong>Can't find it?</strong> Check your <strong>Spam</strong> or <strong>Promotions</strong> folder.
+            If the Mood Studios email is there, open it and choose <strong>Not spam</strong> so future codes arrive in your inbox.
+          </p>
           <input type="hidden" id="otpEmail" />
-          <div class="form-field"><label for="otpCode">OTP code</label><input id="otpCode" required maxlength="6" /></div>
+          <div class="form-field">
+            <label for="otpCode">Verification code</label>
+            <input id="otpCode" type="text" inputmode="numeric" pattern="[0-9]{6}" required maxlength="6" autocomplete="one-time-code" placeholder="000000" />
+          </div>
           <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Verify email</button>
+          <p class="auth-otp-resend">
+            Didn’t get a code?
+            <button type="button" id="resendOtpBtn" class="auth-link-btn">Resend</button>
+          </p>
         </form>
       </section>
     </div>
