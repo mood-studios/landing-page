@@ -1,4 +1,5 @@
 import { publicApi } from './api.js';
+import { DEFAULT_SERVICE_IMAGE } from './config.js';
 import {
   addToCart,
   getCart,
@@ -10,6 +11,7 @@ import {
   formatMoney,
 } from './cart.js';
 import { initNav } from './nav.js';
+import { renderPackageMedia, initPackageCarousels } from './package-samples.js';
 
 let categories = [];
 let activeCategoryId = null;
@@ -32,12 +34,9 @@ function renderPackageCard(service) {
   const lines = parseDescription(service.description);
   const card = document.createElement('article');
   card.className = 'package-card';
-  const imgSrc = service.image || '/img/mood_logo.png';
 
   card.innerHTML = `
-    <div class="img-wrapper">
-      <img class="thumb" src="${imgSrc}" alt="${service.name}" loading="lazy">
-    </div>
+    ${renderPackageMedia(service, { alt: service.name })}
     <div class="package-body">
       <h3>${service.name}</h3>
       <p class="package-price">${formatMoney(service.price)}</p>
@@ -49,6 +48,8 @@ function renderPackageCard(service) {
       </button>
     </div>
   `;
+
+  initPackageCarousels(card);
 
   card.querySelector('.btn-add-cart').addEventListener('click', () => {
     addToCart(service);
@@ -209,7 +210,7 @@ function loadCartUI() {
 
     card.innerHTML = `
       <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleCartSelection(${index})" onclick="event.stopPropagation()">
-      <div class="cart-item-thumb"><img src="${item.image || '/img/mood_logo.png'}" alt=""></div>
+      <div class="cart-item-thumb"><img src="${item.image || DEFAULT_SERVICE_IMAGE}" alt=""></div>
       <div class="cart-item-info">
         <strong>${item.name}</strong>
         <span>${item.duration} min</span>

@@ -1,3 +1,5 @@
+import { getSamplePhotos } from './package-samples.js';
+
 const CART_KEY = 'mood_cart';
 const SELECTED_KEY = 'mood_cart_selected';
 
@@ -46,7 +48,7 @@ export function addToCart(service) {
       name: service.name,
       price: service.price,
       duration: service.duration,
-      image: service.image,
+      image: getSamplePhotos(service)[0],
       description: service.description,
       qty: 1,
       schedules: [{ date: '', time: '' }],

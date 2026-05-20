@@ -1,4 +1,5 @@
 import { publicApi } from './api.js';
+import { DEFAULT_SERVICE_IMAGE } from './config.js';
 import { openAuthModal } from './auth-modal.js';
 import { isAuthenticated } from './auth.js';
 import {
@@ -11,6 +12,7 @@ import {
   removeFromCart,
   formatMoney,
 } from './cart.js';
+import { renderPackageMedia, initPackageCarousels } from './package-samples.js';
 
 let categories = [];
 let activeCategoryId = null;
@@ -54,16 +56,17 @@ function showPackageCards() {
 function renderPackageCard(service) {
   const card = document.createElement('article');
   card.className = 's-card package-offer-card';
-  const imgSrc = service.image || '/img/mood_logo.png';
   const desc = parseDescription(service.description) || `${service.duration} min session`;
 
   card.innerHTML = `
-    <div class="s-icon package-thumb"><img src="${imgSrc}" alt="" /></div>
+    ${renderPackageMedia(service, { alt: service.name })}
     <h3>${service.name}</h3>
     <p class="package-price">${formatMoney(service.price)}</p>
     <p>${desc}</p>
     <button type="button" class="btn-add-package">Add to cart</button>
   `;
+
+  initPackageCarousels(card);
 
   card.querySelector('.btn-add-package').addEventListener('click', () => {
     addToCart(service);
@@ -228,7 +231,7 @@ function loadCartUI() {
 
     card.innerHTML = `
       <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleCartSelection(${index})" onclick="event.stopPropagation()">
-      <div class="cart-item-thumb"><img src="${item.image || '/img/mood_logo.png'}" alt=""></div>
+      <div class="cart-item-thumb"><img src="${item.image || DEFAULT_SERVICE_IMAGE}" alt=""></div>
       <div class="cart-item-info">
         <strong>${item.name}</strong>
         <span>${item.duration} min</span>

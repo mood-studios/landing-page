@@ -54,15 +54,101 @@
   box-shadow: 0 1px 4px rgba(0,0,0,.06);
 }
 
-.img-wrapper {
-  position: relative;
+.package-card .package-media {
   width: 100%;
-  height: 9rem;
+  aspect-ratio: 1 / 1;
+  min-height: 10rem;
   border-radius: .75rem;
+  overflow: hidden;
+  background: var(--purple-pale, #f3e8ff);
+  position: relative;
+  margin-bottom: .5rem;
+}
+
+.package-card .package-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.package-card .package-media--duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+
+.package-card .package-media--default {
+  background: linear-gradient(180deg, #fce7f3 0%, #f3e8ff 55%, #ede9fe 100%);
+}
+
+.package-card .package-media--default img {
+  object-fit: contain;
+  padding: 0.5rem;
+  transform: scale(1.08);
+}
+
+.package-card .package-carousel-viewport {
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
-.img-wrapper .thumb { width: 100%; height: 100%; object-fit: cover; }
+.package-card .package-carousel-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.35s ease;
+}
+
+.package-card .package-carousel-slide {
+  flex: 0 0 100%;
+  height: 100%;
+}
+
+.package-card .package-carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #9814fa;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 2;
+  padding: 0;
+  line-height: 1;
+}
+
+.package-card .package-carousel-prev { left: .35rem; }
+.package-card .package-carousel-next { right: .35rem; }
+
+.package-card .package-carousel-dots {
+  position: absolute;
+  bottom: .35rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: .3rem;
+  z-index: 2;
+}
+
+.package-card .package-carousel-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+}
+
+.package-card .package-carousel-dot.active {
+  background: #fff;
+}
 
 .package-body { display: flex; flex-direction: column; flex: 1; margin-top: .75rem; }
 .package-body h3 { font-size: 1rem; font-weight: 700; line-height: 1.3; }

@@ -1,4 +1,5 @@
 import { publicApi, bookingApi } from './api.js';
+import { DEFAULT_SERVICE_IMAGE } from './config.js';
 import {
   getCart,
   getSelectedIndices,
@@ -193,7 +194,7 @@ function loadCheckoutCart() {
       row.className = 'checkout-item';
       row.innerHTML = `
         <div class="checkout-item-head">
-          <img src="${item.image || '/img/mood_logo.png'}" alt="">
+          <img src="${item.image || DEFAULT_SERVICE_IMAGE}" alt="">
           <div class="checkout-item-info">
             <h3>${item.name}</h3>
             <p>${item.duration} min · ${formatMoney(price)}</p>
