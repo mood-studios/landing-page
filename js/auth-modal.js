@@ -18,6 +18,11 @@ import {
   resetRegisterRecaptcha,
   isRecaptchaEnabled,
 } from './recaptcha.js';
+import {
+  bindPasswordInputValidation,
+  isValidPassword,
+  PASSWORD_REQUIREMENTS_MESSAGE,
+} from './password.js';
 
 let onSuccessCallback = null;
 let resendCooldownTimer = null;
@@ -256,6 +261,16 @@ async function handleRegister(e) {
     return;
   }
 
+  if (!isValidPassword(password)) {
+    await showAlert(PASSWORD_REQUIREMENTS_MESSAGE, {
+      title: 'Password requirements',
+      variant: 'error',
+    });
+    document.getElementById('regPassword')?.focus();
+    btn.disabled = false;
+    return;
+  }
+
   const recaptchaToken = getRegisterRecaptchaToken();
 
   if (!isSignupEmailVerified) {
@@ -349,6 +364,7 @@ export function initAuthModal() {
 
   document.getElementById('loginForm')?.addEventListener('submit', handleLogin);
   document.getElementById('registerForm')?.addEventListener('submit', handleRegister);
+  bindPasswordInputValidation('regPassword');
   document.getElementById('sendSignupOtpBtn')?.addEventListener('click', handleSendSignupOtp);
   document.getElementById('verifySignupOtpBtn')?.addEventListener('click', handleVerifySignupOtp);
   document.getElementById('otpForm')?.addEventListener('submit', handleOtp);

@@ -635,6 +635,12 @@
   font-size: 0.85rem;
 }
 
+.auth-password-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
 .auth-otp-hint {
   font-size: 0.85rem;
   color: var(--muted, #6b7280);
