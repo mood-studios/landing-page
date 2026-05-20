@@ -222,7 +222,8 @@
             <p id="signupEmailVerifyStatus" class="auth-email-verify__status muted" aria-live="polite"></p>
           </div>
           <div class="form-field"><label for="regPhone">Phone</label><input id="regPhone" type="tel" required placeholder="09171234567" /></div>
-          <div class="form-field"><label for="regPassword">Password</label><input id="regPassword" type="password" required minlength="8" /></div>
+          <div class="form-field"><label for="regPassword">Password</label><input id="regPassword" type="password" required minlength="8" autocomplete="new-password" /></div>
+          <div class="form-field"><label for="regConfirmPassword">Confirm password</label><input id="regConfirmPassword" type="password" required minlength="8" autocomplete="new-password" /></div>
           <div class="form-field auth-recaptcha-wrap hidden">
             <div id="registerRecaptcha" class="auth-recaptcha"></div>
           </div>

@@ -243,9 +243,20 @@ async function handleRegister(e) {
   const email = document.getElementById('regEmail').value.trim();
   const phone = document.getElementById('regPhone').value.trim();
   const password = document.getElementById('regPassword').value;
-  const recaptchaToken = getRegisterRecaptchaToken();
+  const confirmPassword = document.getElementById('regConfirmPassword').value;
   const btn = e.target.querySelector('button[type="submit"]');
   btn.disabled = true;
+
+  if (password !== confirmPassword) {
+    await showAlert('Passwords do not match. Please check both fields and try again.', {
+      title: 'Passwords do not match',
+      variant: 'error',
+    });
+    btn.disabled = false;
+    return;
+  }
+
+  const recaptchaToken = getRegisterRecaptchaToken();
 
   if (!isSignupEmailVerified) {
     await showAlert('Please verify your email with the code we sent before creating your account.', {
