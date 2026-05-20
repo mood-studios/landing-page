@@ -51,6 +51,10 @@ function setGalleryContent(gallery, photos) {
 
 function urlsFromFeaturedResponse(data) {
   return (data || [])
+    .filter((item) => {
+      if (typeof item === 'string') return true;
+      return item?.isVisible !== false;
+    })
     .map((item) => (typeof item === 'string' ? item : item?.url))
     .filter((url) => typeof url === 'string' && url.trim());
 }
