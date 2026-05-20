@@ -235,34 +235,40 @@ body { overflow-x: hidden; }
   opacity: 1;
   padding: 0;
   overflow: hidden;
+  min-height: 0;
 }
 
-.package-offer-card > h3,
-.package-offer-card > p,
-.package-offer-card > .btn-add-package {
-  margin-left: 1.25rem;
-  margin-right: 1.25rem;
+.package-offer-card .package-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  padding: 1rem 1.25rem 1.25rem;
+  min-height: 0;
 }
 
-.package-offer-card > h3 {
-  margin-top: 1rem;
+.package-offer-card .package-card-body h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text, #111);
+  margin: 0 0 0.35rem;
 }
 
-.package-offer-card > .btn-add-package {
-  margin-bottom: 1.25rem;
-  width: calc(100% - 2.5rem);
+.package-offer-card .package-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0.35rem 0 0.85rem;
+  flex: 1 1 auto;
 }
 
 .package-offer-card .package-media {
   width: 100%;
-  margin: 0 0 0.75rem;
-  aspect-ratio: 1 / 1;
-  min-height: 12.5rem;
-  border-radius: 0;
+  flex: 0 0 auto;
+  aspect-ratio: 4 / 3;
+  max-height: 11.5rem;
   overflow: hidden;
   background: var(--purple-pale);
   position: relative;
-  flex-shrink: 0;
 }
 
 .package-offer-card .package-media img {
@@ -270,12 +276,6 @@ body { overflow-x: hidden; }
   height: 100%;
   object-fit: cover;
   display: block;
-}
-
-.package-offer-card .package-media--single,
-.package-offer-card .package-media--single img {
-  width: 100%;
-  height: 100%;
 }
 
 .package-offer-card .package-media--duo {
@@ -296,6 +296,12 @@ body { overflow-x: hidden; }
 
 .package-offer-card .package-media--carousel {
   touch-action: pan-y;
+}
+
+.package-offer-card .package-carousel-viewport {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .package-carousel-viewport {
@@ -369,12 +375,12 @@ body { overflow-x: hidden; }
   color: var(--purple);
   font-weight: 700;
   font-size: 1rem;
-  margin: 0.25rem 0;
+  margin: 0;
 }
 
 .package-offer-card .btn-add-package {
   margin-top: auto;
-  width: calc(100% - 2.5rem);
+  width: 100%;
   padding: 0.5rem;
   background: var(--purple);
   color: #fff;

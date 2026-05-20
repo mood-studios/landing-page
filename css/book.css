@@ -56,8 +56,9 @@
 
 .package-card .package-media {
   width: 100%;
-  aspect-ratio: 1 / 1;
-  min-height: 10rem;
+  flex: 0 0 auto;
+  aspect-ratio: 4 / 3;
+  max-height: 9.5rem;
   border-radius: .75rem;
   overflow: hidden;
   background: var(--purple-pale, #f3e8ff);

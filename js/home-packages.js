@@ -60,10 +60,12 @@ function renderPackageCard(service) {
 
   card.innerHTML = `
     ${renderPackageMedia(service, { alt: service.name })}
-    <h3>${service.name}</h3>
-    <p class="package-price">${formatMoney(service.price)}</p>
-    <p>${desc}</p>
-    <button type="button" class="btn-add-package">Add to cart</button>
+    <div class="package-card-body">
+      <h3>${service.name}</h3>
+      <p class="package-price">${formatMoney(service.price)}</p>
+      <p class="package-desc">${desc}</p>
+      <button type="button" class="btn-add-package">Add to cart</button>
+    </div>
   `;
 
   initPackageCarousels(card);
