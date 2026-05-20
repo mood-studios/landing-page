@@ -1,4 +1,5 @@
 import { initHomePackages } from './home-packages.js';
+import { initFeaturedPhotos } from './feature-photos.js';
 import { DASHBOARD_PATH } from './config.js';
 import { initAuthModal, initAuthSession, openAuthModal } from './auth-modal.js';
 
@@ -73,6 +74,9 @@ function initHeroAnimations() {
   anime({ targets: '#hero-sub', opacity: [0, 1], translateY: [20, 0], duration: 700, delay: 550, easing: 'easeOutExpo' });
   anime({ targets: '#hero-ctas', opacity: [0, 1], translateY: [20, 0], duration: 700, delay: 680, easing: 'easeOutExpo' });
   anime({ targets: '#hero-visual', opacity: [0, 1], translateX: [50, 0], duration: 900, delay: 450, easing: 'easeOutExpo' });
+  const featured = document.getElementById('featured-photos');
+  if (featured) featured.style.opacity = '0';
+  anime({ targets: '#featured-photos', opacity: [0, 1], translateY: [24, 0], duration: 700, delay: 720, easing: 'easeOutExpo' });
 
   anime({ targets: '.blob-1', translateX: [0, 35, -20, 0], translateY: [0, -25, 20, 0], duration: 10000, loop: true, easing: 'easeInOutSine' });
   anime({ targets: '.blob-2', translateX: [0, -30, 18, 0], translateY: [0, 22, -16, 0], duration: 12000, loop: true, easing: 'easeInOutSine' });
@@ -108,6 +112,7 @@ async function bootstrap() {
   initAuthModal();
   initHeroAnimations();
   initScrollReveal();
+  initFeaturedPhotos();
   initHomePackages();
   await initAuthSession();
 

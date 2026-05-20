@@ -68,7 +68,7 @@
       <div class="hero-visual" id="hero-visual">
         <div class="hero-card">
           <div class="hero-card-photo">
-            <img src="/img/frontImage.jpg" alt="Mood Studios session" />
+            <img id="hero-main-photo" src="/img/frontImage.jpg" alt="Mood Studios session" fetchpriority="high" />
           </div>
           <div class="hero-card-info">
             <div>
@@ -80,6 +80,18 @@
         </div>
         <div class="pill pill-star">⭐ 5.0 rating</div>
         <div class="pill pill-check">✓ 200+ happy clients</div>
+      </div>
+    </div>
+
+    <div class="hero-featured" id="featured-photos">
+      <div class="hero-featured-head">
+        <p class="hero-featured-tag">Portfolio</p>
+        <h2 class="hero-featured-title">Featured sessions</h2>
+      </div>
+      <div class="featured-gallery-scroll" id="featuredGallery" aria-label="Featured studio photos">
+        <figure class="featured-gallery-item">
+          <img src="/img/frontImage.jpg" alt="Mood Studios session" loading="eager" fetchpriority="high" />
+        </figure>
       </div>
     </div>
   </section>
