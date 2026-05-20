@@ -4,6 +4,7 @@ import { getSamplePhotos } from './package-samples.js';
 
 const FALLBACK_PHOTOS = ['/img/frontImage.jpg'];
 const MAX_FEATURED = 12;
+const MARQUEE_SPEED = 42;
 
 function esc(text) {
   return String(text)
@@ -43,10 +44,51 @@ function renderGallery(photos) {
   return photos.map((src, i) => renderGalleryItem(src, i, { eager: true })).join('');
 }
 
-function setGalleryContent(gallery, photos) {
-  if (!gallery || !photos.length) return;
-  gallery.innerHTML = renderGallery(photos);
-  gallery.classList.add('featured-gallery--ready');
+function setGalleryContent(viewport, photos) {
+  const track = viewport.querySelector('.featured-gallery-track');
+  if (!track || !photos.length) return;
+  track.innerHTML = renderGallery(photos);
+  viewport.classList.remove('featured-gallery-viewport--marquee');
+  track.style.removeProperty('--marquee-duration');
+  viewport.classList.add('featured-gallery--ready');
+}
+
+function whenImagesReady(track) {
+  const imgs = [...track.querySelectorAll('img')];
+  if (!imgs.length) return Promise.resolve();
+  return Promise.all(
+    imgs.map(
+      (img) =>
+        img.complete
+          ? Promise.resolve()
+          : new Promise((resolve) => {
+              img.addEventListener('load', resolve, { once: true });
+              img.addEventListener('error', resolve, { once: true });
+            })
+    )
+  );
+}
+
+function initMarquee(viewport) {
+  const track = viewport.querySelector('.featured-gallery-track');
+  if (!track || track.children.length <= 1) return;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reducedMotion) return;
+
+  requestAnimationFrame(() => {
+    const overflows = track.scrollWidth > viewport.clientWidth + 8;
+    if (!overflows) return;
+
+    [...track.children].forEach((item) => {
+      track.appendChild(item.cloneNode(true));
+    });
+
+    const halfWidth = track.scrollWidth / 2;
+    const duration = Math.max(18, halfWidth / MARQUEE_SPEED);
+    track.style.setProperty('--marquee-duration', `${duration}s`);
+    viewport.classList.add('featured-gallery-viewport--marquee');
+  });
 }
 
 function urlsFromFeaturedResponse(data) {
@@ -60,9 +102,9 @@ function urlsFromFeaturedResponse(data) {
 }
 
 export async function initFeaturedPhotos() {
-  const gallery = document.getElementById('featuredGallery');
+  const viewport = document.getElementById('featuredGallery');
   const heroMain = document.getElementById('hero-main-photo');
-  if (!gallery) return;
+  if (!viewport) return;
 
   let photos = [...FALLBACK_PHOTOS];
 
@@ -80,15 +122,19 @@ export async function initFeaturedPhotos() {
     /* keep fallbacks */
   }
 
-  setGalleryContent(gallery, photos);
+  setGalleryContent(viewport, photos);
+
+  const track = viewport.querySelector('.featured-gallery-track');
+  if (track) await whenImagesReady(track);
+  initMarquee(viewport);
 
   if (heroMain && photos[0]) {
     heroMain.src = photos[0];
     heroMain.alt = 'Mood Studios featured session';
   }
 
-  if (photos.length > 1 && window.anime) {
-    const items = gallery.querySelectorAll('.featured-gallery-item');
+  const items = track?.children || [];
+  if (items.length > 1 && window.anime) {
     anime({
       targets: items,
       opacity: [0, 1],
