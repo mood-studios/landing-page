@@ -53,6 +53,7 @@ export async function apiFetch(path, options = {}) {
 
 export const publicApi = {
   getCategories: () => apiFetch('/public/categories'),
+  getFeaturedPhotos: () => apiFetch('/public/featured-photos'),
   getAllServices: () => apiFetch('/public/services'),
   getServices: (categoryId) =>
     apiFetch(`/public/services${categoryId ? `?category=${categoryId}` : ''}`),

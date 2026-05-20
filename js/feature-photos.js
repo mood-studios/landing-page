@@ -49,6 +49,12 @@ function setGalleryContent(gallery, photos) {
   gallery.classList.add('featured-gallery--ready');
 }
 
+function urlsFromFeaturedResponse(data) {
+  return (data || [])
+    .map((item) => (typeof item === 'string' ? item : item?.url))
+    .filter((url) => typeof url === 'string' && url.trim());
+}
+
 export async function initFeaturedPhotos() {
   const gallery = document.getElementById('featuredGallery');
   const heroMain = document.getElementById('hero-main-photo');
@@ -57,9 +63,15 @@ export async function initFeaturedPhotos() {
   let photos = [...FALLBACK_PHOTOS];
 
   try {
-    const res = await publicApi.getAllServices();
-    const fromApi = collectFeaturedPhotos(res.data || []);
-    if (fromApi.length) photos = fromApi;
+    const featuredRes = await publicApi.getFeaturedPhotos();
+    const fromFeatured = urlsFromFeaturedResponse(featuredRes.data);
+    if (fromFeatured.length) {
+      photos = fromFeatured.slice(0, MAX_FEATURED);
+    } else {
+      const res = await publicApi.getAllServices();
+      const fromServices = collectFeaturedPhotos(res.data || []);
+      if (fromServices.length) photos = fromServices;
+    }
   } catch {
     /* keep fallbacks */
   }
