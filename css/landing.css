@@ -241,9 +241,8 @@ body { overflow-x: hidden; }
 .package-offer-card .package-card-body {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   padding: 1rem 1.25rem 1.25rem;
-  min-height: 0;
 }
 
 .package-offer-card .package-card-body h3 {
@@ -265,17 +264,22 @@ body { overflow-x: hidden; }
   width: 100%;
   flex: 0 0 auto;
   aspect-ratio: 4 / 3;
-  max-height: 11.5rem;
   overflow: hidden;
   background: var(--purple-pale);
   position: relative;
+  display: block;
 }
 
 .package-offer-card .package-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
+}
+
+.package-offer-card .package-media--single {
+  min-height: 10rem;
 }
 
 .package-offer-card .package-media--duo {
@@ -289,9 +293,8 @@ body { overflow-x: hidden; }
 }
 
 .package-offer-card .package-media--default img {
-  object-fit: contain;
-  padding: 0.5rem;
-  transform: scale(1.08);
+  object-fit: cover;
+  padding: 0;
 }
 
 .package-offer-card .package-media--carousel {

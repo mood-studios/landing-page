@@ -58,7 +58,6 @@
   width: 100%;
   flex: 0 0 auto;
   aspect-ratio: 4 / 3;
-  max-height: 9.5rem;
   border-radius: .75rem;
   overflow: hidden;
   background: var(--purple-pale, #f3e8ff);
@@ -84,9 +83,8 @@
 }
 
 .package-card .package-media--default img {
-  object-fit: contain;
-  padding: 0.5rem;
-  transform: scale(1.08);
+  object-fit: cover;
+  padding: 0;
 }
 
 .package-card .package-carousel-viewport {
