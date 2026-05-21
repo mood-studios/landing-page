@@ -3,7 +3,7 @@ import { initFeaturedPhotos } from './feature-photos.js';
 import { DASHBOARD_PATH } from './config.js';
 import { initAuthModal, initAuthSession, openAuthModal } from './auth-modal.js';
 
-const SECTIONS = ['home', 'packages', 'how-it-works', 'contact'];
+const SECTIONS = ['home', 'packages', 'how-it-works', 'faq', 'guidelines', 'contact'];
 
 function initNav() {
   const hamburger = document.getElementById('hamburger');
