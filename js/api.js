@@ -31,8 +31,13 @@ export async function apiFetch(path, options = {}) {
   const url = path.startsWith('http') ? path : `${API_BASE}${path}`;
   const res = await fetch(url, {
     credentials: 'include',
+    cache: 'no-store',
     ...options,
-    headers: apiHeaders(options.headers || {}),
+    headers: {
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache',
+      ...apiHeaders(options.headers || {}),
+    },
   });
 
   let data;
@@ -85,8 +90,9 @@ export const authApi = {
 };
 
 export const bookingApi = {
-  getMyBookings: () => apiFetch('/bookings/my'),
-  getBooking: (id) => apiFetch(`/bookings/${id}`),
+  getMyBookings: () => apiFetch(`/bookings/my?_=${Date.now()}`),
+  getBooking: (id) => apiFetch(`/bookings/${id}?_=${Date.now()}`),
+  cancel: (id) => apiFetch(`/bookings/${id}`, { method: 'DELETE' }),
   create: (payload) =>
     apiFetch('/bookings', { method: 'POST', body: JSON.stringify(payload) }),
   getAvailability: (date, durationMinutes) => {

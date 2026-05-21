@@ -2,6 +2,7 @@ import { bookingApi, galleryApi } from './api.js';
 import { getUser, requireAuth, logout, fetchSession, syncProfileFields } from './auth.js';
 import { initHomePackages } from './home-packages.js';
 import { initChatWidget } from './chat-widget.js';
+import { showAlert, showConfirm } from './app-dialog.js';
 import { formatMoney } from './cart.js';
 
 const PANEL_COPY = {
@@ -35,6 +36,11 @@ function statusLabel(booking) {
 function needsPayment(booking) {
   const pay = booking.paymentStatus || 'unpaid';
   return pay !== 'paid' && booking.bookingStatus !== 'declined';
+}
+
+function canCancelBooking(booking) {
+  const status = booking.bookingStatus || 'pending';
+  return status === 'pending';
 }
 
 function serviceNames(booking) {
@@ -94,8 +100,59 @@ function renderBookingDetailHtml(booking) {
     </dl>
     <h4 class="booking-detail-services-title">Package details</h4>
     ${services.length ? services.map(renderServiceBlock).join('') : '<p class="booking-service-desc-empty">No services listed.</p>'}
-    ${needsPayment(booking) ? `<a href="/payment.html?bookingId=${booking._id}" class="btn btn-purple btn-sm booking-pay-btn">Pay now</a>` : ''}
+    <div class="booking-detail-actions">
+      ${needsPayment(booking) ? `<a href="/payment.html?bookingId=${booking._id}" class="btn btn-purple btn-sm">Pay now</a>` : ''}
+      ${canCancelBooking(booking) ? `<button type="button" class="btn btn-ghost btn-sm booking-cancel-btn" data-booking-id="${escapeHtml(String(booking._id))}">Cancel booking</button>` : ''}
+    </div>
   `;
+}
+
+function bindBookingDetailActions(detail, bookingId) {
+  const id = String(bookingId);
+  const btn = detail.querySelector('.booking-cancel-btn');
+  if (!btn || btn.dataset.cancelBound) return;
+  btn.dataset.cancelBound = '1';
+
+  btn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (
+      !(await showConfirm('Cancel this booking? This cannot be undone.', {
+        title: 'Cancel booking',
+        confirmText: 'Yes, cancel',
+        cancelText: 'Keep booking',
+        variant: 'error',
+      }))
+    ) {
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Cancelling…';
+
+    try {
+      await bookingApi.cancel(id);
+      bookingsById.delete(id);
+
+      const item = btn.closest('.booking-item');
+      item?.classList.remove('is-open');
+      item?.querySelector('.booking-row-toggle')?.setAttribute('aria-expanded', 'false');
+      detail.classList.add('hidden');
+      detail.innerHTML = '';
+
+      showPanel('bookings');
+      await loadBookings();
+      await showAlert('Booking cancelled.', { title: 'Cancelled', variant: 'success' });
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Cancel booking';
+      await showAlert(err.message || 'Could not cancel booking.', {
+        title: 'Cancel failed',
+        variant: 'error',
+      });
+    }
+  });
 }
 
 function bindBookingToggles(list) {
@@ -126,6 +183,7 @@ function bindBookingToggles(list) {
         booking = res.data;
         bookingsById.set(id, booking);
         detail.innerHTML = renderBookingDetailHtml(booking);
+        bindBookingDetailActions(detail, id);
       } catch (err) {
         detail.innerHTML = `<p class="bookings-empty error">${escapeHtml(err.message)}</p>`;
       }

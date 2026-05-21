@@ -1469,9 +1469,27 @@ body.auth-modal-open { overflow: hidden; }
   .dash-card { flex: 1 1 0; min-width: 10rem; }
 }
 
-.booking-pay-btn {
-  margin-top: 0.5rem;
-  display: inline-flex;
+.booking-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  align-items: center;
+}
+
+.booking-cancel-btn {
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.booking-cancel-btn:hover:not(:disabled) {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.booking-cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Payment page (matches mobile PaymentCheckoutScreen) */
