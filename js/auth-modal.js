@@ -12,6 +12,7 @@ import {
   fetchSession,
 } from './auth.js';
 import { showAlert } from './app-dialog.js';
+import { initPasswordToggles } from './password-toggle.js';
 import {
   mountRegisterRecaptcha,
   getRegisterRecaptchaToken,
@@ -400,6 +401,8 @@ export function initAuthModal() {
     e.preventDefault();
     showPanel('login');
   });
+
+  initPasswordToggles(document.getElementById('authModal'));
 }
 
 export async function initAuthSession() {

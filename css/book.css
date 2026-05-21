@@ -530,7 +530,9 @@
 
 .form-field { margin-bottom: 1rem; }
 .form-field label { font-size: .875rem; font-weight: 500; }
-.form-field input, .form-field textarea {
+.form-field input,
+.form-field textarea,
+.form-field .password-input-wrap input {
   width: 100%; margin-top: .35rem;
   padding: .5rem .75rem;
   border: 1px solid #d1d5db;
@@ -541,7 +543,8 @@
 }
 
 .form-field--invalid input,
-.form-field--invalid textarea {
+.form-field--invalid textarea,
+.form-field--invalid .password-input-wrap input {
   border-color: #dc2626;
   background-color: #fef2f2;
   box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15);
@@ -683,6 +686,47 @@
   margin: 0.35rem 0 0;
   font-size: 0.8rem;
   line-height: 1.4;
+}
+
+.password-input-wrap {
+  position: relative;
+  width: 100%;
+  margin-top: 0.35rem;
+}
+
+.form-field > label + .password-input-wrap {
+  margin-top: 0.35rem;
+}
+
+.password-input-wrap input {
+  width: 100%;
+  margin-top: 0;
+  padding-right: 3.25rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.2rem 0.45rem;
+  border: none;
+  background: transparent;
+  color: var(--purple, #7c3aed);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  line-height: 1.2;
+}
+
+.password-toggle:hover {
+  background: rgba(124, 58, 237, 0.08);
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid var(--purple, #7c3aed);
+  outline-offset: 2px;
 }
 
 .auth-otp-hint {

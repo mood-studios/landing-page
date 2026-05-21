@@ -201,7 +201,10 @@
           </div>
           <div class="form-field">
             <label for="loginPassword">Password</label>
-            <input id="loginPassword" type="password" required autocomplete="current-password" />
+            <div class="password-input-wrap">
+              <input id="loginPassword" type="password" required autocomplete="current-password" />
+              <button type="button" class="password-toggle" data-password-toggle>Show</button>
+            </div>
           </div>
           <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Log in</button>
           <p class="auth-switch">
@@ -226,10 +229,19 @@
           <div class="form-field"><label for="regPhone">Phone</label><input id="regPhone" type="tel" required placeholder="09171234567" inputmode="numeric" maxlength="11" autocomplete="tel" /></div>
           <div class="form-field">
             <label for="regPassword">Password</label>
-            <input id="regPassword" type="password" required minlength="8" autocomplete="new-password" aria-describedby="regPasswordHint" />
+            <div class="password-input-wrap">
+              <input id="regPassword" type="password" required minlength="8" autocomplete="new-password" aria-describedby="regPasswordHint" />
+              <button type="button" class="password-toggle" data-password-toggle>Show</button>
+            </div>
             <p id="regPasswordHint" class="auth-password-hint muted">At least 8 characters, one uppercase letter, and one special character (e.g. ! @ #).</p>
           </div>
-          <div class="form-field"><label for="regConfirmPassword">Confirm password</label><input id="regConfirmPassword" type="password" required minlength="8" autocomplete="new-password" /></div>
+          <div class="form-field">
+            <label for="regConfirmPassword">Confirm password</label>
+            <div class="password-input-wrap">
+              <input id="regConfirmPassword" type="password" required minlength="8" autocomplete="new-password" />
+              <button type="button" class="password-toggle" data-password-toggle>Show</button>
+            </div>
+          </div>
           <div class="form-field auth-recaptcha-wrap hidden">
             <div id="registerRecaptcha" class="auth-recaptcha"></div>
           </div>
