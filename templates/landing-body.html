@@ -1,4 +1,4 @@
-  <header class="nav nav--visible" id="nav">
+﻿  <header class="nav nav--visible" id="nav">
     <a href="#home" class="nav-brand">
       <img src="/img/mood_logo.png" alt="Mood Studios" />
       Mood Studios
@@ -431,6 +431,15 @@
           <div class="form-field auth-recaptcha-wrap hidden">
             <div id="registerRecaptcha" class="auth-recaptcha"></div>
           </div>
+          <div class="form-field auth-terms-field" id="signupTermsRow">
+            <p id="signupTermsText" class="auth-terms-text">
+              I agree to the <a href="#" id="openSignupTermsLink" class="auth-terms-link">Terms and Conditions</a>
+            </p>
+            <div class="auth-terms-progress-wrap" aria-hidden="true">
+              <div class="auth-terms-progress-bar" id="signupTermsProgressBar"></div>
+            </div>
+            <p id="signupTermsProgress" class="auth-terms-progress-label">0/1 agreement accepted</p>
+          </div>
           <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Create account</button>
           <p class="auth-switch">
             Have an account? <a href="#" id="showLogin">Log in</a>
@@ -497,5 +506,40 @@
           </p>
         </form>
       </section>
+    </div>
+  </div>
+
+  <div id="signupTermsModal" class="auth-terms-modal hidden" aria-hidden="true" role="dialog" aria-labelledby="signupTermsModalTitle">
+    <div class="auth-terms-modal__backdrop" data-signup-terms-close tabindex="-1"></div>
+    <div class="auth-terms-modal__dialog">
+      <div class="auth-terms-modal__header">
+        <h2 id="signupTermsModalTitle">Terms and Conditions</h2>
+        <button type="button" class="auth-terms-modal__close" data-signup-terms-close aria-label="Close">&times;</button>
+      </div>
+      <div class="auth-terms-modal__body">
+        <h3>Reservation and Payment</h3>
+        <p>Clients are encouraged to settle their payment before the scheduled booking date. Unpaid bookings may still proceed; however, confirmed and fully paid clients will be prioritized in the event of overlapping schedules or walk-in bookings.</p>
+
+        <h3>Walk-In Priority Policy</h3>
+        <p>If a client has not completed payment prior to their scheduled booking, the slot may be subject to availability. In cases where walk-in clients arrive during the reserved schedule, management reserves the right to prioritize confirmed paying clients.</p>
+
+        <h3>No Refund Policy</h3>
+        <p>All payments made are non-refundable.</p>
+
+        <h3>Exceptions for Refunds</h3>
+        <p>Refunds will only be granted in cases where the service issue is due to the fault or negligence of the provider. Examples include, but are not limited to:</p>
+        <ul>
+          <li>Failure to properly record or save files due to missing or faulty memory cards;</li>
+          <li>Technical malfunctions resulting in unusable outputs (e.g., black or corrupted photos caused by equipment failure);</li>
+          <li>Other verified service-related errors directly caused by the provider.</li>
+        </ul>
+
+        <h3>Agreement</h3>
+        <p>By completing the registration and booking process, the client acknowledges and agrees to these terms and conditions.</p>
+      </div>
+      <div class="auth-terms-modal__footer">
+        <p class="auth-terms-modal__hint">Please read the terms above before clicking &ldquo;I Understand&rdquo;.</p>
+        <button type="button" id="signupTermsAcceptBtn" class="btn btn-purple auth-terms-understand-btn">I Understand</button>
+      </div>
     </div>
   </div>

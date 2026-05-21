@@ -34,6 +34,12 @@ import {
   validateFields,
   sanitizePhoneDigits,
 } from './form-validation.js';
+import {
+  initSignupTerms,
+  resetSignupTerms,
+  isSignupTermsAccepted,
+  closeSignupTermsModal,
+} from './signup-terms.js';
 
 let onSuccessCallback = null;
 let resendCooldownTimer = null;
@@ -73,6 +79,7 @@ function showPanel(id) {
 
   if (id === 'register') {
     isSignupEmailVerified = false;
+    resetSignupTerms();
     const status = document.getElementById('signupEmailVerifyStatus');
     if (status) status.textContent = '';
     requestAnimationFrame(() => mountRegisterRecaptcha());
@@ -303,6 +310,15 @@ async function handleRegister(e) {
 
   const recaptchaToken = getRegisterRecaptchaToken();
 
+  if (!isSignupTermsAccepted()) {
+    await showAlert('Please open the Terms and Conditions, read them, and click "I Understand" before creating your account.', {
+      title: 'Terms not accepted',
+      variant: 'error',
+    });
+    btn.disabled = false;
+    return;
+  }
+
   if (!isSignupEmailVerified) {
     await showAlert('Please verify your email with the code we sent before creating your account.', {
       title: 'Email not verified',
@@ -495,7 +511,13 @@ export function initAuthModal() {
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && document.getElementById('authModal') && !document.getElementById('authModal').classList.contains('hidden')) {
+    if (e.key !== 'Escape') return;
+    const termsModal = document.getElementById('signupTermsModal');
+    if (termsModal && !termsModal.classList.contains('hidden')) {
+      closeSignupTermsModal();
+      return;
+    }
+    if (document.getElementById('authModal') && !document.getElementById('authModal').classList.contains('hidden')) {
       closeAuthModal();
     }
   });
@@ -539,6 +561,7 @@ export function initAuthModal() {
   });
 
   initPasswordToggles(document.getElementById('authModal'));
+  initSignupTerms();
 }
 
 export async function initAuthSession() {
