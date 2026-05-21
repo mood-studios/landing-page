@@ -1,0 +1,178 @@
+  <header class="app-nav">
+    <div class="app-nav-inner">
+      <a href="/dashboard.html" class="brand-link">
+        <img src="/img/mood_logo.png" alt="Mood Studios" />
+        Mood Studios
+      </a>
+      <nav class="dash-nav-tabs" aria-label="Dashboard sections">
+        <button type="button" class="dash-tab active" data-panel="book">Book</button>
+        <button type="button" class="dash-tab" data-panel="bookings">My bookings</button>
+        <button type="button" class="dash-tab" data-panel="gallery">Gallery</button>
+        <button type="button" class="dash-tab" data-panel="profile">Profile</button>
+      </nav>
+      <div class="nav-actions">
+        <button type="button" class="btn-cart-header" id="headerCartBtn" aria-label="Open cart">
+          <img src="/icons/cart-dark.svg" alt="" width="22" height="22" class="btn-cart-header-icon" />
+          <span class="cart-fab-count hidden" data-cart-count>0</span>
+        </button>
+        <button type="button" class="btn btn-ghost" id="logoutBtn">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+    <div class="dashboard-greet">
+      <h1 id="dashboardGreeting">Hello</h1>
+      <p id="dashboardSubtext">Browse packages and book your next session.</p>
+    </div>
+
+    <section class="dash-panel active" id="panel-book" data-panel="book">
+      <div class="panel dash-packages-panel">
+        <div class="dashboard-section-head">
+          <div>
+            <h2>Packages</h2>
+            <p class="section-lead">Choose a category, add to cart, then checkout.</p>
+          </div>
+        </div>
+        <div class="category-tabs" id="categoryTabs"></div>
+        <div id="packageContainer" class="services-grid">
+          <p class="packages-loading">Loading packages…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="dash-panel" id="panel-bookings" data-panel="bookings" hidden>
+      <div class="panel">
+        <div class="dashboard-section-head">
+          <div>
+            <h2>My bookings</h2>
+            <p class="section-lead">Tap a booking to view package details and status.</p>
+          </div>
+          <button type="button" class="btn btn-purple btn-sm" data-go-panel="book">Book new</button>
+        </div>
+        <div id="bookingsList" class="bookings-list">
+          <p class="bookings-loading">Loading…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="dash-panel" id="panel-gallery" data-panel="gallery" hidden>
+      <div class="panel">
+        <div class="dashboard-section-head">
+          <div>
+            <h2>My Gallery</h2>
+            <p class="section-lead">Photos from your sessions appear here after the studio uploads them.</p>
+          </div>
+        </div>
+        <div id="galleryHub" class="bookings-list gallery-hub">
+          <p class="bookings-loading">Loading…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="dash-panel" id="panel-profile" data-panel="profile" hidden>
+      <div class="panel dashboard-profile">
+        <div class="profile-head">
+          <h2>Profile</h2>
+          <div class="profile-actions">
+            <button type="button" id="profileEditBtn" class="btn btn-ghost btn-sm">Edit</button>
+            <div id="profileEditActions" class="profile-edit-actions hidden">
+              <button type="button" id="profileCancelBtn" class="btn btn-ghost btn-sm">Cancel</button>
+              <button type="button" id="profileSaveBtn" class="btn btn-purple btn-sm">Save</button>
+            </div>
+          </div>
+        </div>
+        <dl class="profile-dl">
+          <div>
+            <dt>Name</dt>
+            <dd id="profileName" class="profile-value">—</dd>
+            <input type="text" id="profileNameInput" class="profile-input hidden" autocomplete="name" />
+          </div>
+          <div>
+            <dt>Email</dt>
+            <dd id="profileEmail" class="profile-value profile-readonly">—</dd>
+          </div>
+          <div>
+            <dt>Phone</dt><dd id="profilePhone" class="profile-value">—</dd>
+            <input type="tel" id="profilePhoneInput" class="profile-input hidden" autocomplete="tel" /></div>
+        </dl>
+        <p id="profileHint" class="profile-hint">Email cannot be changed here. Contact the studio if you need to update it.</p>
+        <p id="profileError" class="profile-error hidden" role="alert"></p>
+      </div>
+      <div class="panel profile-danger-zone">
+        <h3>Delete account</h3>
+        <p class="profile-hint">Permanently remove your account and sign-in access. This cannot be undone.</p>
+        <label class="profile-delete-label">
+          Password
+          <input type="password" id="deleteAccountPassword" class="profile-input" autocomplete="current-password" />
+        </label>
+        <button type="button" id="deleteAccountBtn" class="btn btn-danger btn-sm">Delete my account</button>
+        <p id="deleteAccountError" class="profile-error hidden" role="alert"></p>
+      </div>
+    </section>
+  </main>
+
+  <div class="chat-widget" id="chatWidget">
+    <div id="chatPanel" class="chat-panel hidden" aria-hidden="true" role="dialog" aria-labelledby="chatPanelTitle">
+      <header class="chat-panel-head">
+        <div>
+          <h3 id="chatPanelTitle">Mood Studios</h3>
+          <p id="chatStatus" class="chat-status">Messages</p>
+        </div>
+        <button type="button" id="chatCloseBtn" class="chat-close-btn" aria-label="Close chat">×</button>
+      </header>
+      <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+      <p id="chatEmpty" class="chat-empty">Say hello — we typically reply during business hours.</p>
+      <p id="chatError" class="chat-error hidden" role="alert"></p>
+      <form id="chatForm" class="chat-form">
+        <input type="text" id="chatInput" class="chat-input" placeholder="Type a message…" maxlength="2000" autocomplete="off" />
+        <button type="submit" class="btn btn-purple chat-send-btn" aria-label="Send message">Send</button>
+      </form>
+    </div>
+    <button type="button" id="chatFab" class="chat-fab" aria-label="Open chat" aria-expanded="false" aria-controls="chatPanel">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M20 2H4a2 2 0 0 0-2 2v14l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <button type="button" class="cart-fab dash-cart-fab" id="cartFab" aria-label="Open cart">
+    <img src="/icons/cart.svg" alt="" width="22" height="22" />
+    <span class="cart-fab-count hidden" data-cart-count>0</span>
+  </button>
+
+  <div id="cartMessage" class="cart-toast success hidden"></div>
+  <div id="overlay" class="hidden" onclick="toggleCart()"></div>
+
+  <aside id="cartSidebar">
+    <div class="cart-header">
+      <h2>Your Cart <span id="cartCount">0 items</span></h2>
+      <button type="button" onclick="toggleCart()" aria-label="Close">×</button>
+    </div>
+    <div class="cart-select-row">
+      <input type="checkbox" id="selectAllChk" onchange="toggleSelectAll()" />
+      <label for="selectAllChk">Select all</label>
+      <span id="selectedCount"></span>
+    </div>
+    <div id="cartContainer"></div>
+    <div class="cart-footer">
+      <div class="row"><span>Subtotal</span><span id="cartSubtotal">₱0.00</span></div>
+      <div class="total"><span>Total</span><span id="cartTotal">₱0.00</span></div>
+      <button type="button" id="checkoutBtn" class="btn btn-purple" style="width:100%;padding:.75rem" disabled>Proceed to Checkout</button>
+    </div>
+  </aside>
+
+  <nav class="dash-bottom-nav" aria-label="Dashboard navigation">
+    <button type="button" class="dash-tab active" data-panel="book">
+      <span aria-hidden="true">📷</span>
+      Book
+    </button>
+    <button type="button" class="dash-tab" data-panel="bookings">
+      <span aria-hidden="true">📅</span>
+      Bookings
+    </button>
+    <button type="button" class="dash-tab" data-panel="profile">
+      <span aria-hidden="true">👤</span>
+      Profile
+    </button>
+  </nav>

@@ -1,9 +1,17 @@
+import dashboardBody from '../templates/dashboard-body.html?raw';
 import { bookingApi, galleryApi, userApi } from './api.js';
 import { getUser, requireAuth, logout, fetchSession, syncProfileFields } from './auth.js';
 import { initHomePackages } from './home-packages.js';
 import { initChatWidget } from './chat-widget.js';
 import { showAlert, showConfirm } from './app-dialog.js';
 import { formatMoney } from './cart.js';
+import { initSourceGuard } from './source-guard.js';
+
+function mountDashboardPage() {
+  const root = document.getElementById('app');
+  if (!root) return;
+  root.innerHTML = dashboardBody;
+}
 
 const PANEL_COPY = {
   book: 'Browse packages and book your next session.',
@@ -582,6 +590,9 @@ async function loadBookings() {
 }
 
 async function init() {
+  initSourceGuard();
+  mountDashboardPage();
+
   if (!(await requireAuth())) return;
 
   await fetchSession();

@@ -1,0 +1,501 @@
+  <header class="nav nav--visible" id="nav">
+    <a href="#home" class="nav-brand">
+      <img src="/img/mood_logo.png" alt="Mood Studios" />
+      Mood Studios
+    </a>
+    <ul class="nav-links">
+      <li><a href="#home" data-section="home">Home</a></li>
+      <li><a href="#packages" data-section="packages">Packages</a></li>
+      <li><a href="#how-it-works" data-section="how-it-works">How it works</a></li>
+      <li><a href="#faq" data-section="faq">FAQ</a></li>
+      <li><a href="#contact" data-section="contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <span class="nav-greeting hidden" data-user-greeting></span>
+      <a href="/dashboard.html" class="btn btn-ghost nav-dashboard hidden">Dashboard</a>
+      <button type="button" class="btn btn-ghost auth-open-login" data-auth-open="login">Log in</button>
+      <button type="button" class="btn btn-ghost auth-open-logout hidden">Log out</button>
+      <a href="#packages" class="btn btn-purple">Book now</a>
+    </div>
+    <button class="hamburger" type="button" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#home" data-section="home">Home</a>
+    <a href="#packages" data-section="packages">Packages</a>
+    <a href="#how-it-works" data-section="how-it-works">How it works</a>
+    <a href="#faq" data-section="faq">FAQ</a>
+    <a href="#contact" data-section="contact">Contact</a>
+    <a href="/dashboard.html" class="nav-dashboard hidden">Dashboard</a>
+    <button type="button" class="mobile-menu-auth auth-open-login" data-auth-open="login">Log in</button>
+    <button type="button" class="mobile-menu-auth" data-auth-open="register">Sign up</button>
+    <a href="#packages" class="nav-mobile-cta">Book now →</a>
+  </div>
+
+  <section class="hero" id="home">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-badge" id="hero-badge">
+          <div class="hero-badge-dot"></div>
+          Bacoor, Cavite · Now booking
+        </div>
+        <h1 class="hero-h1" id="hero-h1">Capture Your<br><em>Perfect Mood</em></h1>
+        <p class="hero-sub" id="hero-sub">
+          Celebrate your story today. Whether you're marking a milestone, cherishing time with family, or simply treating yourself — we make every frame timeless.
+        </p>
+        <div class="hero-ctas" id="hero-ctas">
+          <a href="#packages" class="btn btn-purple">Book a session</a>
+          <button type="button" class="btn btn-pink" data-auth-open="login">Log in</button>
+        </div>
+      </div>
+
+      <div class="hero-visual" id="hero-visual">
+        <div class="hero-card">
+          <div class="hero-card-photo">
+            <img id="hero-main-photo" src="/img/frontImage.jpg" alt="Mood Studios session" fetchpriority="high" />
+          </div>
+          <div class="hero-card-info">
+            <div>
+              <p class="hero-card-title">Studio Sessions</p>
+              <p class="hero-card-sub">Available all week</p>
+            </div>
+            <div class="hero-card-avatar">
+              <img src="/img/mood_logo.png" alt="Mood Studios" width="36" height="36" />
+            </div>
+          </div>
+        </div>
+        <div class="pill pill-star">⭐ 5.0 rating</div>
+        <div class="pill pill-check">✓ 200+ happy clients</div>
+      </div>
+    </div>
+
+    <div class="hero-featured" id="featured-photos">
+      <div class="hero-featured-head">
+        <p class="hero-featured-tag">Portfolio</p>
+        <h2 class="hero-featured-title">Featured sessions</h2>
+      </div>
+      <div class="featured-gallery" id="featuredGalleryWrap" aria-label="Featured studio photos">
+        <div class="featured-gallery-track" id="featuredGalleryTrack">
+          <figure class="featured-gallery-item">
+            <img src="/img/frontImage.jpg" alt="Mood Studios session" loading="eager" fetchpriority="high" />
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker">
+    <div class="ticker-track">
+      <span>✦ <b>Keepsake</b> · from ₱650</span>
+      <span>✦ <b>Euphoria Pro</b> · family moments</span>
+      <span>✦ <b>Photographer Session</b> · glam & maternity</span>
+      <span>✦ <b>Self Portrait Pro</b> · prints included</span>
+      <span>✦ <b>Keepsake</b> · from ₱650</span>
+      <span>✦ <b>Euphoria Pro</b> · family moments</span>
+      <span>✦ <b>Photographer Session</b> · glam & maternity</span>
+      <span>✦ <b>Self Portrait Pro</b> · prints included</span>
+    </div>
+  </div>
+
+  <div id="packages" style="background: var(--bg);">
+    <div class="section-wrap">
+      <p class="tag reveal">What we offer</p>
+      <h2 class="section-h2 reveal">Sessions for every moment</h2>
+      <p class="section-sub reveal">From solo portraits to photographer-led shoots — every package is crafted with heart.</p>
+      <div class="category-tabs" id="categoryTabs"></div>
+      <div class="services-grid" id="packageContainer">
+        <p class="packages-loading">Loading packages…</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-wrap" style="padding-top:0">
+    <div class="stats-banner reveal">
+      <div><div class="stat-val">200+</div><div class="stat-lbl">Happy clients</div></div>
+      <div><div class="stat-val">5.0★</div><div class="stat-lbl">Average rating</div></div>
+      <div><div class="stat-val">3 yrs</div><div class="stat-lbl">In business</div></div>
+      <div><div class="stat-val">12+</div><div class="stat-lbl">Packages</div></div>
+    </div>
+  </div>
+
+  <div id="how-it-works" style="background: var(--bg);">
+    <div class="section-wrap">
+      <p class="tag reveal">How it works</p>
+      <h2 class="section-h2 reveal">Five simple steps</h2>
+      <p class="section-sub reveal">Booking your dream session has never been easier.</p>
+      <div class="steps">
+        <div class="step reveal"><div class="step-num">01</div><div class="step-body"><h4>Choose your package</h4><p>Browse packages and pick what fits your style and budget.</p></div></div>
+        <div class="step reveal"><div class="step-num">02</div><div class="step-body"><h4>Log in or sign up</h4><p>Create an account to save details and manage bookings.</p></div></div>
+        <div class="step reveal"><div class="step-num">03</div><div class="step-body"><h4>Pick date & time</h4><p>Select an available slot and confirm your session.</p></div></div>
+        <div class="step reveal"><div class="step-num">04</div><div class="step-body"><h4>Secure your booking</h4><p>Pay online to reserve your date instantly.</p></div></div>
+        <div class="step reveal"><div class="step-num">05</div><div class="step-body"><h4>Show up & smile</h4><p>Visit our Bacoor studio — we handle the rest.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="faq" style="background: var(--bg);">
+    <div class="section-wrap">
+      <p class="tag reveal">Good to know</p>
+      <h2 class="section-h2 reveal">Frequently asked questions</h2>
+      <p class="section-sub reveal">Quick answers before you book your session.</p>
+
+      <div class="faq-list">
+        <details class="faq-item reveal">
+          <summary>Pet-friendly?</summary>
+          <div class="faq-answer">
+            <p>Yesss. We are a very pet-friendly studio. Just please make sure that they’re wearing diapers when inside the studio. And please clean after them hehe.</p>
+            <p>If you’re lucky, you may meet our resident doggos <strong>Pabooh</strong> and <strong>Nala</strong>. ♥</p>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary>Do you have parking?</summary>
+          <div class="faq-answer">
+            <p>Yes! We have a limited parking space in the building on a first come, first serve basis.</p>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary>Location and landmark?</summary>
+          <div class="faq-answer">
+            <p>You can find us at <strong>2nd Floor, AFO Building, Molino I, Bacoor</strong>. Just beside Bacoor National High School.</p>
+            <p>
+              Waze / Maps:
+              <a href="https://www.google.com/maps/search/?api=1&amp;query=Viera+Blooms+Floral+Studio+Bacoor" target="_blank" rel="noopener noreferrer">Viera Blooms Floral Studio</a>
+              (we’re in the same building!)
+            </p>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary>Do you accept walk-ins?</summary>
+          <div class="faq-answer">
+            <p>Yes, we do! But to secure an appointment, please make sure to book a slot first! :)</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div id="guidelines" style="background: var(--bg);">
+    <div class="section-wrap guidelines-wrap">
+      <p class="tag reveal">Before your visit</p>
+      <h2 class="section-h2 reveal">Studio guidelines</h2>
+      <p class="section-sub reveal guidelines-intro">
+        To ensure a pleasant experience for all clients, we kindly ask that you review and follow our studio guidelines. Your cooperation helps us maintain a safe and beautiful space for everyone.
+      </p>
+
+      <div class="faq-list">
+        <details class="faq-item reveal">
+          <summary>Equipment care &amp; damage</summary>
+          <div class="faq-answer">
+            <ul>
+              <li>Please handle all studio equipment, furniture, props, and accessories with care.</li>
+              <li>Any damage to equipment, furniture, props, lighting, or cameras due to misuse, negligence, or accidents will be charged accordingly.</li>
+              <li>Fees will be charged if backdrops are damaged, torn, stained, watered, written on, or improperly handled.</li>
+              <li>Clients are not allowed to adjust or move lighting equipment unless assisted by studio staff.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary>Companions &amp; additional pax</summary>
+          <div class="faq-answer">
+            <ul>
+              <li>Only one (1) companion is allowed per session.</li>
+              <li>If a companion joins the shoot or appears in photos, additional pax fees will apply.</li>
+              <li>Children must be supervised at all times by an adult companion.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary>Pet policy</summary>
+          <div class="faq-answer">
+            <ul>
+              <li>We love furry friends! Pets are always welcome in our studio, and we’re happy to include them in your session while keeping the space safe and comfortable for everyone.</li>
+              <li>Pets must be clean, well-groomed, and diapered.</li>
+              <li>Owners are kindly asked to keep their pets supervised at all times.</li>
+              <li>Please bring treats, toys, or anything that helps keep your pet calm and happy during the shoot.</li>
+              <li>Any accidents, stains, or damage caused by pets may be subject to corresponding cleaning or damage fees.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary>Session time &amp; overtime</summary>
+          <div class="faq-answer">
+            <ul>
+              <li>Sessions start and end strictly at the scheduled time.</li>
+              <li>Please arrive on time; late arrivals may result in reduced shooting time.</li>
+              <li>Staying inside the studio for more than 10 minutes after the session ends is not allowed.</li>
+              <li>Overtime fees will apply if you exceed your booked time.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary>Cleanliness &amp; safety</summary>
+          <div class="faq-answer">
+            <ul>
+              <li>No smoking, vaping, or alcohol inside the studio.</li>
+              <li>Please keep personal belongings within designated areas.</li>
+              <li>The studio is not responsible for lost or unattended items.</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div id="contact" style="background: var(--bg);">
+    <div class="section-wrap contact-section">
+      <p class="tag reveal">Contact</p>
+      <h2 class="section-h2 reveal">Visit Mood Studios</h2>
+      <p class="section-sub reveal">Say hello, find us on socials, or book your next session.</p>
+
+      <div class="contact-grid reveal">
+        <div class="contact-card">
+          <div class="contact-block contact-block--location">
+            <span class="contact-block-icon contact-block-icon--location" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <div>
+              <h3 class="contact-card-title">Studio location</h3>
+              <p class="contact-address-text">
+                <strong>Mood Studios</strong><br />
+                2nd Floor, AFO Building, Molino I<br />
+                Bacoor, Cavite 4102
+              </p>
+              <p class="contact-address-hint">Beside Bacoor National High School · Same building as Viera Blooms Floral Studio</p>
+              <a
+                class="contact-maps-link"
+                href="https://www.google.com/maps/search/?api=1&amp;query=Mood+Self-Shoot+Studio+Bacoor"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Open in Google Maps <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+
+          <div class="contact-divider" aria-hidden="true"></div>
+
+          <div class="contact-block">
+            <h3 class="contact-card-title">Follow us</h3>
+            <ul class="contact-social">
+              <li>
+                <a href="https://www.instagram.com/moodstudios.ph" target="_blank" rel="noopener noreferrer">
+                  <span class="contact-social-icon contact-social-icon--ig" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                  </span>
+                  <span>Instagram</span>
+                  <span class="contact-external" aria-hidden="true">↗</span>
+                </a>
+              </li>
+              <li>
+                <a href="https://www.facebook.com/moodstudios.ph" target="_blank" rel="noopener noreferrer">
+                  <span class="contact-social-icon contact-social-icon--fb" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.84v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                  </span>
+                  <span>Facebook</span>
+                  <span class="contact-external" aria-hidden="true">↗</span>
+                </a>
+              </li>
+              <li>
+                <a href="https://www.tiktok.com/@moodstudios.ph" target="_blank" rel="noopener noreferrer">
+                  <span class="contact-social-icon contact-social-icon--tt" aria-hidden="true">
+                    <img src="/icons/tiktok.svg" alt="" width="20" height="20" class="contact-social-icon-img" />
+                  </span>
+                  <span>TikTok</span>
+                  <span class="contact-external" aria-hidden="true">↗</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="contact-cta">
+            <p class="contact-book-lead">Ready to capture your moment?</p>
+            <a href="#packages" class="btn btn-purple contact-book-btn">Book a session</a>
+          </div>
+        </div>
+
+        <div class="contact-map-wrap">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4754.618580676126!2d120.97508160000001!3d14.423072099999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397d3ec45f30923%3A0xa2c8a2f80ed9ed29!2sMood%20Self-Shoot%20Studio!5e1!3m2!1sen!2sph!4v1779327024274!5m2!1sen!2sph"
+            width="400"
+            height="300"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Mood Studios location on Google Maps"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2026 Mood Studios · Bacoor, Cavite · All rights reserved</footer>
+
+  <button type="button" class="cart-fab" id="cartFab" aria-label="Open cart">
+    <img src="/icons/cart.svg" alt="" width="22" height="22" />
+    <span class="cart-fab-count hidden" id="cartFabCount" data-cart-count>0</span>
+  </button>
+
+  <div id="cartMessage" class="cart-toast success hidden"></div>
+  <div id="overlay" class="hidden" onclick="toggleCart()"></div>
+
+  <aside id="cartSidebar">
+    <div class="cart-header">
+      <h2>Your Cart <span id="cartCount">0 items</span></h2>
+      <button type="button" onclick="toggleCart()" aria-label="Close">×</button>
+    </div>
+    <div class="cart-select-row">
+      <input type="checkbox" id="selectAllChk" onchange="toggleSelectAll()" />
+      <label for="selectAllChk">Select all</label>
+      <span id="selectedCount"></span>
+    </div>
+    <div id="cartContainer"></div>
+    <div class="cart-footer">
+      <div class="row"><span>Subtotal</span><span id="cartSubtotal">₱0.00</span></div>
+      <div class="total"><span>Total</span><span id="cartTotal">₱0.00</span></div>
+      <button type="button" id="checkoutBtn" class="btn btn-purple" style="width:100%;padding:.75rem" disabled>Proceed to Checkout</button>
+    </div>
+  </aside>
+
+  <div id="authModal" class="auth-modal hidden" aria-hidden="true" role="dialog" aria-labelledby="authModalTitle">
+    <div class="auth-modal-backdrop" data-auth-close></div>
+    <div class="auth-modal-dialog">
+      <button type="button" class="auth-modal-close" data-auth-close aria-label="Close">&times;</button>
+      <img src="/img/mood_logo.png" alt="" class="auth-logo" style="margin:0 auto .75rem;display:block;width:4rem;height:4rem" />
+      <h2 id="authModalTitle" class="auth-modal-title">Log in</h2>
+      <p class="auth-modal-sub">Sign in to book and manage your sessions</p>
+
+      <section class="auth-card" data-auth-panel="login">
+        <form id="loginForm">
+          <div class="form-field">
+            <label for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" required autocomplete="email" />
+          </div>
+          <div class="form-field">
+            <div class="form-field-label-row">
+              <label for="loginPassword">Password</label>
+              <a href="#" id="showForgot" class="auth-forgot-link">Forgot password?</a>
+            </div>
+            <div class="password-input-wrap">
+              <input id="loginPassword" type="password" required autocomplete="current-password" />
+              <button type="button" class="password-toggle" data-password-toggle>Show</button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Log in</button>
+          <p class="auth-switch">
+            No account? <a href="#" id="showRegister">Sign up</a>
+          </p>
+        </form>
+      </section>
+
+      <section class="auth-card hidden" data-auth-panel="register">
+        <form id="registerForm">
+          <div class="form-field"><label for="regName">Full name</label><input id="regName" type="text" required autocomplete="name" maxlength="80" /></div>
+          <div class="form-field"><label for="regEmail">Email</label><input id="regEmail" type="email" required /></div>
+          <div class="form-field auth-email-verify">
+            <label for="regEmailOtp">Email verification code</label>
+            <div class="auth-email-verify__row">
+              <input id="regEmailOtp" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
+              <button type="button" id="sendSignupOtpBtn" class="btn btn-ghost btn--sm">Send code</button>
+              <button type="button" id="verifySignupOtpBtn" class="btn btn-ghost btn--sm">Verify</button>
+            </div>
+            <p id="signupEmailVerifyStatus" class="auth-email-verify__status muted" aria-live="polite"></p>
+          </div>
+          <div class="form-field"><label for="regPhone">Phone</label><input id="regPhone" type="tel" required placeholder="09171234567" inputmode="numeric" maxlength="11" autocomplete="tel" /></div>
+          <div class="form-field">
+            <label for="regPassword">Password</label>
+            <div class="password-input-wrap">
+              <input id="regPassword" type="password" required minlength="8" autocomplete="new-password" aria-describedby="regPasswordHint" />
+              <button type="button" class="password-toggle" data-password-toggle>Show</button>
+            </div>
+            <p id="regPasswordHint" class="auth-password-hint muted">At least 8 characters, one uppercase letter, and one special character (e.g. ! @ #).</p>
+          </div>
+          <div class="form-field">
+            <label for="regConfirmPassword">Confirm password</label>
+            <div class="password-input-wrap">
+              <input id="regConfirmPassword" type="password" required minlength="8" autocomplete="new-password" />
+              <button type="button" class="password-toggle" data-password-toggle>Show</button>
+            </div>
+          </div>
+          <div class="form-field auth-recaptcha-wrap hidden">
+            <div id="registerRecaptcha" class="auth-recaptcha"></div>
+          </div>
+          <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Create account</button>
+          <p class="auth-switch">
+            Have an account? <a href="#" id="showLogin">Log in</a>
+          </p>
+        </form>
+      </section>
+
+      <section class="auth-card hidden" data-auth-panel="forgot">
+        <form id="forgotForm">
+          <p class="auth-otp-hint">Enter your account email. We’ll send a 6-digit code to reset your password.</p>
+          <p class="auth-otp-spam-note">
+            <strong>Can't find it?</strong> Check your <strong>Spam</strong> or <strong>Promotions</strong> folder.
+          </p>
+          <div class="form-field">
+            <label for="forgotEmail">Email</label>
+            <input id="forgotEmail" type="email" required autocomplete="email" />
+          </div>
+          <div class="form-field auth-email-verify">
+            <label for="forgotOtp">Reset code</label>
+            <div class="auth-email-verify__row">
+              <input id="forgotOtp" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
+              <button type="button" id="sendForgotOtpBtn" class="btn btn-ghost btn--sm">Send code</button>
+            </div>
+            <p id="forgotOtpStatus" class="auth-email-verify__status muted" aria-live="polite"></p>
+          </div>
+          <div class="form-field">
+            <label for="forgotPassword">New password</label>
+            <div class="password-input-wrap">
+              <input id="forgotPassword" type="password" required minlength="8" autocomplete="new-password" aria-describedby="forgotPasswordHint" />
+              <button type="button" class="password-toggle" data-password-toggle>Show</button>
+            </div>
+            <p id="forgotPasswordHint" class="auth-password-hint muted">At least 8 characters, one uppercase letter, and one special character.</p>
+          </div>
+          <div class="form-field">
+            <label for="forgotConfirmPassword">Confirm new password</label>
+            <div class="password-input-wrap">
+              <input id="forgotConfirmPassword" type="password" required minlength="8" autocomplete="new-password" />
+              <button type="button" class="password-toggle" data-password-toggle>Show</button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Reset password</button>
+          <p class="auth-switch">
+            <a href="#" id="showLoginFromForgot">Back to log in</a>
+          </p>
+        </form>
+      </section>
+
+      <section class="auth-card hidden" data-auth-panel="otp">
+        <form id="otpForm">
+          <p class="auth-otp-hint" id="otpHint">Enter the 6-digit code we sent to your email.</p>
+          <p class="auth-otp-spam-note" id="otpSpamNote">
+            <strong>Can't find it?</strong> Check your <strong>Spam</strong> or <strong>Promotions</strong> folder.
+            If the Mood Studios email is there, open it and choose <strong>Not spam</strong> so future codes arrive in your inbox.
+          </p>
+          <input type="hidden" id="otpEmail" />
+          <div class="form-field">
+            <label for="otpCode">Verification code</label>
+            <input id="otpCode" type="text" inputmode="numeric" pattern="[0-9]{6}" required maxlength="6" autocomplete="one-time-code" placeholder="000000" />
+          </div>
+          <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Verify email</button>
+          <p class="auth-otp-resend">
+            Didn’t get a code?
+            <button type="button" id="resendOtpBtn" class="auth-link-btn">Resend</button>
+          </p>
+        </form>
+      </section>
+    </div>
+  </div>

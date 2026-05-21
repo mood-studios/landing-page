@@ -20,7 +20,9 @@ function escapeHtml(str) {
 
 function senderId(msg) {
   const s = msg.senderId;
-  if (s && typeof s === 'object') return String(s._id);
+  if (s && typeof s === 'object') {
+    return String(s._id || s.id || '');
+  }
   return String(s || '');
 }
 
@@ -67,6 +69,40 @@ function appendMessage(msg, { scroll = true } = {}) {
   if (scroll) scrollMessagesToEnd();
 }
 
+/** Swap the latest optimistic bubble for the saved server message. */
+function replaceOptimisticMessage(msg) {
+  const list = document.getElementById('chatMessages');
+  const empty = document.getElementById('chatEmpty');
+  if (!list || !msg) return false;
+
+  const id = msg._id ? String(msg._id) : '';
+  if (id && messageExists(id)) return true;
+
+  const temp = list.querySelector('[data-msg-id^="temp-"]:last-of-type');
+  if (temp && id && !id.startsWith('temp-')) {
+    temp.replaceWith(renderMessage(msg));
+    if (empty) empty.classList.add('hidden');
+    scrollMessagesToEnd();
+    return true;
+  }
+
+  return false;
+}
+
+function handleIncomingMessage(data) {
+  if (!data) return;
+
+  if (data.roomId) roomId = data.roomId;
+
+  const fromMe = senderId(data) === myId;
+  const foreignRoom =
+    !fromMe && data.roomId && roomId && data.roomId !== roomId;
+  if (foreignRoom) return;
+
+  if (fromMe && replaceOptimisticMessage(data)) return;
+  appendMessage(data);
+}
+
 function setChatStatus(text) {
   const el = document.getElementById('chatStatus');
   if (el) el.textContent = text;
@@ -90,10 +126,19 @@ function joinStudioRoom() {
 }
 
 function connectSocket() {
-  if (socket?.connected) return socket;
-
   const token = getAuthToken();
   if (!token) return null;
+
+  if (socket?.connected) {
+    joinStudioRoom();
+    return socket;
+  }
+
+  if (socket) {
+    socket.removeAllListeners();
+    socket.disconnect();
+    socket = null;
+  }
 
   socket = io(SOCKET_URL || window.location.origin, {
     auth: { token },
@@ -109,14 +154,15 @@ function connectSocket() {
   socket.on('disconnect', () => setChatStatus('Reconnecting…'));
   socket.on('connect_error', () => setChatStatus('Connection issue'));
 
-  socket.on('receive_message', (data) => {
-    if (!data) return;
-    if (data.roomId && roomId && data.roomId !== roomId) return;
-    appendMessage(data);
+  socket.on('receive_message', handleIncomingMessage);
+
+  socket.on('room_joined', (payload) => {
+    if (payload?.roomId) roomId = payload.roomId;
   });
 
   socket.on('new_message_notification', ({ roomId: notifRoom, senderId: fromId }) => {
     const studioId = studio?._id ? String(studio._id) : '';
+    if (fromId === myId) return;
     if (fromId === studioId || (notifRoom && roomId && notifRoom === roomId)) {
       loadChat({ quiet: true });
     }
@@ -143,7 +189,7 @@ async function loadChat({ quiet = false } = {}) {
 
   studio = (await chatApi.getStudio()).data;
   const me = getUser();
-  myId = String(me?._id || '');
+  myId = String(me?._id || me?.id || '');
 
   const title = document.getElementById('chatPanelTitle');
   if (title) title.textContent = studio?.name || 'Mood Studios';
@@ -167,42 +213,65 @@ async function loadChat({ quiet = false } = {}) {
     );
     messages.forEach((m) => {
       const id = m._id ? String(m._id) : '';
-      if (id && !existingIds.has(id)) appendMessage(m, { scroll: false });
+      if (id && !existingIds.has(id)) {
+        if (senderId(m) === myId && replaceOptimisticMessage(m)) return;
+        appendMessage(m, { scroll: false });
+      }
     });
     if (messages.length && empty) empty.classList.add('hidden');
   }
 
   scrollMessagesToEnd();
   connectSocket();
-  joinStudioRoom();
-  setChatStatus('Online');
+  setChatStatus(socket?.connected ? 'Online' : 'Connecting…');
 }
 
-function sendChatMessage() {
+async function sendChatMessage() {
   const input = document.getElementById('chatInput');
   const text = input?.value.trim();
   if (!text || !studio) return;
 
   setChatError('');
+  const tempId = `temp-${Date.now()}`;
   appendMessage({
-    _id: `temp-${Date.now()}`,
+    _id: tempId,
     message: text,
     senderId: { _id: myId },
     createdAt: new Date().toISOString(),
   });
-
-  if (!socket?.connected) {
-    input.value = '';
-    loadChat({ quiet: true });
-    return;
-  }
-
-  socket.emit('send_message', {
-    receiverId: String(studio._id),
-    message: text,
-  });
   input.value = '';
-  input.focus();
+
+  const studioId = String(studio._id);
+  const sock = connectSocket();
+
+  try {
+    if (sock?.connected) {
+      joinStudioRoom();
+      sock.emit('send_message', {
+        receiverId: studioId,
+        message: text,
+      });
+      input.focus();
+      return;
+    }
+
+    const res = await chatApi.sendMessage(studioId, text);
+    const saved = res.data;
+    if (saved && replaceOptimisticMessage(saved)) {
+      input.focus();
+      return;
+    }
+    if (saved) {
+      handleIncomingMessage(saved);
+    }
+    input.focus();
+  } catch (err) {
+    const list = document.getElementById('chatMessages');
+    list?.querySelector(`[data-msg-id="${tempId}"]`)?.remove();
+    setChatError(err.message || 'Could not send message');
+    input.value = text;
+    input.focus();
+  }
 }
 
 function startPolling() {
@@ -272,6 +341,7 @@ export function initChatWidget() {
 
 export function teardownChatWidget() {
   stopPolling();
+  socket?.removeAllListeners();
   socket?.disconnect();
   socket = null;
   studio = null;

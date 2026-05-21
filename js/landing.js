@@ -1,7 +1,29 @@
+import landingBody from '../templates/landing-body.html?raw';
 import { initHomePackages } from './home-packages.js';
 import { initFeaturedPhotos } from './feature-photos.js';
 import { DASHBOARD_PATH } from './config.js';
 import { initAuthModal, initAuthSession, openAuthModal } from './auth-modal.js';
+import { initSourceGuard } from './source-guard.js';
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) {
+      resolve();
+      return;
+    }
+    const el = document.createElement('script');
+    el.src = src;
+    el.onload = () => resolve();
+    el.onerror = () => reject(new Error(`Failed to load ${src}`));
+    document.head.appendChild(el);
+  });
+}
+
+function mountLandingPage() {
+  const root = document.getElementById('app');
+  if (!root) return;
+  root.innerHTML = landingBody;
+}
 
 const SECTIONS = ['home', 'packages', 'how-it-works', 'faq', 'guidelines', 'contact'];
 
@@ -108,6 +130,13 @@ function initScrollReveal() {
 }
 
 async function bootstrap() {
+  initSourceGuard();
+  mountLandingPage();
+  try {
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js');
+  } catch {
+    /* animations optional */
+  }
   initNav();
   initAuthModal();
   initHeroAnimations();

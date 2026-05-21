@@ -168,4 +168,9 @@ export const chatApi = {
   getStudio: () => apiFetch('/chat/studio'),
   getHistory: (receiverId) =>
     apiFetch(`/chat/history?${new URLSearchParams({ receiverId })}`),
+  sendMessage: (receiverId, message) =>
+    apiFetch('/chat/messages', {
+      method: 'POST',
+      body: JSON.stringify({ receiverId, message }),
+    }),
 };
