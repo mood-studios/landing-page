@@ -1,4 +1,4 @@
-import { bookingApi, galleryApi } from './api.js';
+import { bookingApi, galleryApi, userApi } from './api.js';
 import { getUser, requireAuth, logout, fetchSession, syncProfileFields } from './auth.js';
 import { initHomePackages } from './home-packages.js';
 import { initChatWidget } from './chat-widget.js';
@@ -47,6 +47,12 @@ function serviceNames(booking) {
   const services = booking.services || [];
   if (!services.length) return 'Session';
   return services.map((s) => s.name).filter(Boolean).join(', ');
+}
+
+function isGalleryEligible(booking) {
+  const status = booking.bookingStatus || '';
+  const pay = booking.paymentStatus || 'unpaid';
+  return (status === 'confirmed' || status === 'completed') && pay === 'paid';
 }
 
 function escapeHtml(str) {
@@ -340,10 +346,54 @@ async function saveProfile() {
   }
 }
 
+function setDeleteAccountError(message) {
+  const el = document.getElementById('deleteAccountError');
+  if (!el) return;
+  if (message) {
+    el.textContent = message;
+    el.classList.remove('hidden');
+  } else {
+    el.textContent = '';
+    el.classList.add('hidden');
+  }
+}
+
+async function deleteAccount() {
+  const password = document.getElementById('deleteAccountPassword')?.value || '';
+  if (!password) {
+    setDeleteAccountError('Enter your password to confirm.');
+    return;
+  }
+
+  const ok = await showConfirm(
+    'This permanently deletes your account and cannot be undone. Continue?',
+    {
+      title: 'Delete account?',
+      confirmText: 'Delete account',
+      variant: 'error',
+    }
+  );
+  if (!ok) return;
+
+  const btn = document.getElementById('deleteAccountBtn');
+  if (btn) btn.disabled = true;
+  setDeleteAccountError('');
+
+  try {
+    await userApi.deleteAccount(password);
+    await logout();
+    window.location.href = '/index.html';
+  } catch (err) {
+    setDeleteAccountError(err.message || 'Could not delete account.');
+    if (btn) btn.disabled = false;
+  }
+}
+
 function initProfileEdit() {
   document.getElementById('profileEditBtn')?.addEventListener('click', enterProfileEdit);
   document.getElementById('profileCancelBtn')?.addEventListener('click', cancelProfileEdit);
   document.getElementById('profileSaveBtn')?.addEventListener('click', saveProfile);
+  document.getElementById('deleteAccountBtn')?.addEventListener('click', deleteAccount);
 }
 
 function showPanel(id, { updateHash = true } = {}) {
@@ -382,8 +432,15 @@ function renderGalleryAlbums(albums) {
   return albums
     .map(
       (album) => `
-      <div class="gallery-album">
-        <h4 class="gallery-album-title">${escapeHtml(album.albumName || 'Album')}</h4>
+      <div class="gallery-album" data-album-id="${escapeHtml(String(album._id))}">
+        <div class="gallery-album-head">
+          <h4 class="gallery-album-title">${escapeHtml(album.albumName || 'Album')}</h4>
+          ${
+            album.photos?.length
+              ? `<button type="button" class="btn btn-ghost btn-sm gallery-download-btn" data-album-id="${escapeHtml(String(album._id))}" data-album-name="${escapeHtml(album.albumName || 'album')}">Download album</button>`
+              : ''
+          }
+        </div>
         ${
           album.photos?.length
             ? `<div class="gallery-photo-grid">${album.photos
@@ -401,6 +458,26 @@ function renderGalleryAlbums(albums) {
     `
     )
     .join('');
+}
+
+function bindGalleryAlbumActions(container) {
+  container.querySelectorAll('.gallery-download-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const albumId = btn.dataset.albumId;
+      const albumName = btn.dataset.albumName || 'album';
+      const prev = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Preparing…';
+      try {
+        await galleryApi.downloadAlbum(albumId, albumName);
+      } catch (err) {
+        await showAlert(err.message || 'Could not download album.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = prev;
+      }
+    });
+  });
 }
 
 function bindGalleryToggles(hub) {
@@ -428,6 +505,7 @@ function bindGalleryToggles(hub) {
       try {
         const res = await galleryApi.getByBooking(id);
         detail.innerHTML = renderGalleryAlbums(res.data || []);
+        bindGalleryAlbumActions(detail);
       } catch (err) {
         detail.innerHTML = `<p class="bookings-empty error">${escapeHtml(err.message)}</p>`;
       }
@@ -439,16 +517,11 @@ function renderGalleryHub(bookings) {
   const hub = document.getElementById('galleryHub');
   if (!hub) return;
 
-  const eligible = bookings.filter((b) => {
-    const status = b.bookingStatus || '';
-    return status === 'completed' || status === 'confirmed';
-  });
-
-  const list = eligible.length ? eligible : bookings;
+  const list = bookings.filter(isGalleryEligible);
 
   if (!list.length) {
     hub.innerHTML = `
-      <p class="bookings-empty">No sessions yet.</p>
+      <p class="bookings-empty">No gallery sessions yet. Photos appear after your booking is confirmed and payment is complete.</p>
       <button type="button" class="btn btn-purple" style="margin-top:1rem" data-go-panel="book">Book a session</button>
     `;
     hub.querySelector('[data-go-panel]')?.addEventListener('click', () => showPanel('book'));

@@ -1255,11 +1255,47 @@ body.auth-modal-open { overflow: hidden; }
   margin-top: 0.5rem;
 }
 
+.gallery-album-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .gallery-album-title {
   font-size: 0.875rem;
   font-weight: 600;
-  margin: 0 0 0.5rem;
+  margin: 0;
   color: var(--text, #111);
+}
+
+.profile-danger-zone {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border, #e5e7eb);
+}
+
+.profile-danger-zone h3 {
+  font-size: 1rem;
+  margin: 0 0 0.35rem;
+  color: #b91c1c;
+}
+
+.profile-delete-label {
+  display: block;
+  margin: 0.75rem 0;
+  font-size: 0.875rem;
+}
+
+.btn-danger {
+  background: #b91c1c;
+  color: #fff;
+  border: none;
+}
+
+.btn-danger:hover {
+  background: #991b1b;
 }
 
 .gallery-photo-grid {

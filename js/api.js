@@ -117,10 +117,41 @@ export const paymentApi = {
 export const userApi = {
   updateProfile: (body) =>
     apiFetch('/users/profile', { method: 'PUT', body: JSON.stringify(body) }),
+  deleteAccount: (password) =>
+    apiFetch('/users/me', { method: 'DELETE', body: JSON.stringify({ password }) }),
 };
 
 export const galleryApi = {
   getByBooking: (bookingId) => apiFetch(`/gallery/booking/${bookingId}`),
+  downloadAlbum: async (albumId, filename = 'album') => {
+    const url = `${API_BASE}/gallery/${albumId}/download`;
+    const res = await fetch(url, {
+      credentials: 'include',
+      cache: 'no-store',
+      headers: apiHeaders({ Accept: 'application/zip' }),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      let message = 'Download failed';
+      try {
+        const data = text ? JSON.parse(text) : {};
+        message = data.message || message;
+      } catch {
+        /* ignore */
+      }
+      throw new Error(message);
+    }
+    const blob = await res.blob();
+    const safe = String(filename).replace(/[^\w\-]+/g, '_').slice(0, 80) || 'album';
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = objectUrl;
+    link.download = `${safe}.zip`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(objectUrl);
+  },
 };
 
 export const chatApi = {

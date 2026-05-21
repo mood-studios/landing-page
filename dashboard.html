@@ -110,6 +110,16 @@
         <p id="profileHint" class="profile-hint">Email cannot be changed here. Contact the studio if you need to update it.</p>
         <p id="profileError" class="profile-error hidden" role="alert"></p>
       </div>
+      <div class="panel profile-danger-zone">
+        <h3>Delete account</h3>
+        <p class="profile-hint">Permanently remove your account and sign-in access. This cannot be undone.</p>
+        <label class="profile-delete-label">
+          Password
+          <input type="password" id="deleteAccountPassword" class="profile-input" autocomplete="current-password" />
+        </label>
+        <button type="button" id="deleteAccountBtn" class="btn btn-danger btn-sm">Delete my account</button>
+        <p id="deleteAccountError" class="profile-error hidden" role="alert"></p>
+      </div>
     </section>
   </main>
 
