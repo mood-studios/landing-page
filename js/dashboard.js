@@ -381,7 +381,7 @@ async function deleteAccount() {
 
   try {
     await userApi.deleteAccount(password);
-    await logout();
+    await logout({ skipConfirm: true });
     window.location.href = '/index.html';
   } catch (err) {
     setDeleteAccountError(err.message || 'Could not delete account.');

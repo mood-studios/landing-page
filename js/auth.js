@@ -1,4 +1,5 @@
 import { authApi, userApi, setAuthToken } from './api.js';
+import { showConfirm } from './app-dialog.js';
 
 let currentUser = null;
 let sessionPromise = null;
@@ -101,7 +102,18 @@ export async function syncProfileFields({ name, phone }) {
   await fetchSession();
 }
 
-export async function logout() {
+/**
+ * @param {{ skipConfirm?: boolean }} [options]
+ */
+export async function logout(options = {}) {
+  if (!options.skipConfirm) {
+    const ok = await showConfirm('Are you sure you want to log out?', {
+      title: 'Log out',
+      confirmText: 'Log out',
+    });
+    if (!ok) return;
+  }
+
   try {
     await authApi.logout();
   } catch {
