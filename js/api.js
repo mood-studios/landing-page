@@ -86,6 +86,16 @@ export const authApi = {
     apiFetch('/auth/resend-otp', { method: 'POST', body: JSON.stringify({ email }) }),
   verifyOtp: (email, otp) =>
     apiFetch('/auth/verify-otp', { method: 'POST', body: JSON.stringify({ email, otp }) }),
+  sendForgotPasswordOtp: (email) =>
+    apiFetch('/auth/forgot-password/send-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+  resetForgotPassword: (email, otp, password) =>
+    apiFetch('/auth/forgot-password/reset', {
+      method: 'POST',
+      body: JSON.stringify({ email, otp, password }),
+    }),
   logout: () => apiFetch('/auth/logout', { method: 'POST' }),
 };
 

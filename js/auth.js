@@ -87,6 +87,14 @@ export async function verifyOtp(email, otp) {
   return currentUser;
 }
 
+export async function sendForgotPasswordOtp(email) {
+  await authApi.sendForgotPasswordOtp(email);
+}
+
+export async function resetForgotPassword(email, otp, password) {
+  await authApi.resetForgotPassword(email, otp, password);
+}
+
 export async function syncProfileFields({ name, phone }) {
   if (!name && !phone) return;
   await userApi.updateProfile({ name, phone });

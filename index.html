@@ -395,7 +395,10 @@
             <input id="loginEmail" type="email" required autocomplete="email" />
           </div>
           <div class="form-field">
-            <label for="loginPassword">Password</label>
+            <div class="form-field-label-row">
+              <label for="loginPassword">Password</label>
+              <a href="#" id="showForgot" class="auth-forgot-link">Forgot password?</a>
+            </div>
             <div class="password-input-wrap">
               <input id="loginPassword" type="password" required autocomplete="current-password" />
               <button type="button" class="password-toggle" data-password-toggle>Show</button>
@@ -443,6 +446,46 @@
           <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Create account</button>
           <p class="auth-switch">
             Have an account? <a href="#" id="showLogin">Log in</a>
+          </p>
+        </form>
+      </section>
+
+      <section class="auth-card hidden" data-auth-panel="forgot">
+        <form id="forgotForm">
+          <p class="auth-otp-hint">Enter your account email. We’ll send a 6-digit code to reset your password.</p>
+          <p class="auth-otp-spam-note">
+            <strong>Can't find it?</strong> Check your <strong>Spam</strong> or <strong>Promotions</strong> folder.
+          </p>
+          <div class="form-field">
+            <label for="forgotEmail">Email</label>
+            <input id="forgotEmail" type="email" required autocomplete="email" />
+          </div>
+          <div class="form-field auth-email-verify">
+            <label for="forgotOtp">Reset code</label>
+            <div class="auth-email-verify__row">
+              <input id="forgotOtp" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
+              <button type="button" id="sendForgotOtpBtn" class="btn btn-ghost btn--sm">Send code</button>
+            </div>
+            <p id="forgotOtpStatus" class="auth-email-verify__status muted" aria-live="polite"></p>
+          </div>
+          <div class="form-field">
+            <label for="forgotPassword">New password</label>
+            <div class="password-input-wrap">
+              <input id="forgotPassword" type="password" required minlength="8" autocomplete="new-password" aria-describedby="forgotPasswordHint" />
+              <button type="button" class="password-toggle" data-password-toggle>Show</button>
+            </div>
+            <p id="forgotPasswordHint" class="auth-password-hint muted">At least 8 characters, one uppercase letter, and one special character.</p>
+          </div>
+          <div class="form-field">
+            <label for="forgotConfirmPassword">Confirm new password</label>
+            <div class="password-input-wrap">
+              <input id="forgotConfirmPassword" type="password" required minlength="8" autocomplete="new-password" />
+              <button type="button" class="password-toggle" data-password-toggle>Show</button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-purple" style="width:100%;margin-top:.5rem">Reset password</button>
+          <p class="auth-switch">
+            <a href="#" id="showLoginFromForgot">Back to log in</a>
           </p>
         </form>
       </section>

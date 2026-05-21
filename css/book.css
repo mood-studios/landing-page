@@ -454,7 +454,8 @@
   color: #6b7280;
 }
 
-.schedule-row input {
+.schedule-row input,
+.schedule-row select {
   display: block;
   width: 100%;
   margin-top: 0.3rem;
@@ -464,6 +465,16 @@
   font-size: 0.875rem;
   font-family: inherit;
   background: #fff;
+}
+
+.schedule-hint {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.65rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  color: #9ca3af;
 }
 
 .checkout-form-grid {
@@ -664,6 +675,29 @@
 }
 
 .auth-switch a { color: var(--purple, #7c3aed); }
+
+.form-field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.form-field-label-row label {
+  margin-bottom: 0;
+}
+
+.auth-forgot-link {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--purple, #7c3aed);
+  text-decoration: none;
+}
+
+.auth-forgot-link:hover {
+  text-decoration: underline;
+}
 
 .auth-email-verify__row {
   display: flex;

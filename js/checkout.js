@@ -44,16 +44,53 @@ function showFieldStatus(inputEl, state, message = '') {
 }
 
 async function fetchSlots(cartIndex, date, unitIndex, duration) {
+  const key = schedKey(cartIndex, unitIndex);
+  const select = document.querySelector(`select[data-sched="${key}"]`);
+  if (!select) return;
+
   try {
     const res = await publicApi.getAvailability(date, duration);
-    const listId = `slots-${cartIndex}-${unitIndex}`;
-    const datalist = document.getElementById(listId);
-    if (!datalist) return;
+    const slots = res.data?.slots || [];
+    const available = slots.filter((s) => s.available);
+    const cart = getCart();
+    const sched = cart[cartIndex]?.schedules?.[unitIndex];
 
-    const available = (res.data?.slots || []).filter((s) => s.available);
-    datalist.innerHTML = available.map((s) => `<option value="${s.value}">${s.time}</option>`).join('');
+    if (!available.length) {
+      select.innerHTML = '<option value="">No times available this day</option>';
+      select.disabled = true;
+      if (sched) {
+        sched.time = '';
+        sched.timeLabel = '';
+        saveCart(cart);
+      }
+      return;
+    }
+
+    select.disabled = false;
+    const current = sched?.time || '';
+    select.innerHTML =
+      '<option value="">Select time</option>' +
+      available
+        .map(
+          (s) =>
+            `<option value="${s.value}"${current === s.value ? ' selected' : ''}>${s.time}</option>`
+        )
+        .join('');
+
+    if (current && !available.some((s) => s.value === current)) {
+      sched.time = '';
+      sched.timeLabel = '';
+      delete availabilityCache[key];
+      saveCart(cart);
+      const area = select.closest('.schedule-row')?.querySelector('.availability-area');
+      if (area) {
+        area.innerHTML =
+          '<span class="avail-msg error">Previously selected time is no longer available</span>';
+      }
+    }
   } catch {
-    /* ignore */
+    select.innerHTML = '<option value="">Could not load times</option>';
+    select.disabled = true;
   }
 }
 
@@ -89,9 +126,20 @@ window.updateTime = function updateTime(cartIndex, value, unitIndex = 0) {
   const cart = getCart();
   const item = cart[cartIndex];
   const schedule = item?.schedules?.[unitIndex];
+  const key = schedKey(cartIndex, unitIndex);
+  const select = document.querySelector(`select[data-sched="${key}"]`);
 
   if (!schedule?.date) {
     showAlert('Please select a date first.', { variant: 'error' });
+    return;
+  }
+
+  if (!value) {
+    schedule.time = '';
+    schedule.timeLabel = '';
+    saveCart(cart);
+    delete availabilityCache[key];
+    if (select) showFieldStatus(select, 'idle');
     return;
   }
 
@@ -105,6 +153,7 @@ window.updateTime = function updateTime(cartIndex, value, unitIndex = 0) {
   if (duplicate) {
     showAlert('This date and time is already used by another item in your cart.', { variant: 'error' });
     schedule.time = '';
+    schedule.timeLabel = '';
     saveCart(cart);
     loadCheckoutCart();
     return;
@@ -113,27 +162,8 @@ window.updateTime = function updateTime(cartIndex, value, unitIndex = 0) {
   schedule.time = value;
   schedule.timeLabel = valueToBookingTime(value);
   saveCart(cart);
-  delete availabilityCache[schedKey(cartIndex, unitIndex)];
-
-  const input = document.querySelector(`[data-sched="${schedKey(cartIndex, unitIndex)}"]`);
-  if (input) showFieldStatus(input, 'checking', 'Checking…');
-
-  publicApi
-    .getAvailability(schedule.date, item.duration || 60)
-    .then((res) => {
-      const slot = (res.data?.slots || []).find((s) => s.value === value);
-      availabilityCache[schedKey(cartIndex, unitIndex)] = Boolean(slot?.available);
-      if (input) {
-        showFieldStatus(
-          input,
-          slot?.available ? 'ok' : 'error',
-          slot?.available ? 'Available' : 'Slot taken'
-        );
-      }
-    })
-    .catch(() => {
-      if (input) showFieldStatus(input, 'error', 'Could not verify');
-    });
+  availabilityCache[key] = true;
+  if (select) showFieldStatus(select, 'ok', 'Available');
 };
 
 window.removeCheckoutFromCart = async function removeCheckoutFromCart(index, unitIndex = null) {
@@ -176,8 +206,6 @@ function loadCheckoutCart() {
   const maxDateObj = new Date(now);
   maxDateObj.setMonth(maxDateObj.getMonth() + 3);
   const maxDate = maxDateObj.toISOString().split('T')[0];
-  const minTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
   if (!entries.length) {
     container.innerHTML =
       '<p class="cart-empty">No items selected. <a href="/dashboard.html#book">Go back to packages</a>.</p>';
@@ -195,7 +223,6 @@ function loadCheckoutCart() {
     for (let i = 0; i < qty; i++) {
       const sched = item.schedules[i] || { date: '', time: '' };
       const key = schedKey(index, i);
-      const listId = `slots-${index}-${i}`;
       subtotal += price;
 
       const row = document.createElement('div');
@@ -216,12 +243,11 @@ function loadCheckoutCart() {
             <input type="date" value="${sched.date || ''}" min="${minDate}" max="${maxDate}"
               onchange="updateDate(${index}, this.value, ${i})" required>
           </label>
-          <label>Time
-            <datalist id="${listId}"></datalist>
-            <input type="time" value="${sched.time || ''}" list="${listId}"
-              min="${sched.date === minDate ? minTime : '09:00'}" max="18:00"
-              data-sched="${key}" ${!sched.date ? 'disabled' : ''}
+          <label>Time <span class="schedule-hint">9:00 AM – 5:00 PM</span>
+            <select data-sched="${key}" ${!sched.date ? 'disabled' : ''}
               onchange="updateTime(${index}, this.value, ${i})" required>
+              <option value="">${sched.date ? 'Loading times…' : 'Select date first'}</option>
+            </select>
             <div class="availability-area"></div>
           </label>
         </div>
@@ -255,6 +281,23 @@ async function completeBooking() {
   if (!validateCart(entries)) {
     await showAlert('Please select a date and time for every session.', { variant: 'error' });
     return;
+  }
+
+  for (const { item } of entries) {
+    const qty = item.qty || 1;
+    for (let u = 0; u < qty; u++) {
+      const sched = item.schedules[u];
+      const res = await publicApi.getAvailability(sched.date, item.duration || 60);
+      const slot = (res.data?.slots || []).find((s) => s.value === sched.time);
+      if (!slot?.available) {
+        await showAlert(
+          'One or more selected times are no longer available. Please choose another time.',
+          { variant: 'error' }
+        );
+        loadCheckoutCart();
+        return;
+      }
+    }
   }
 
   const fullNameEl = document.getElementById('fullName');

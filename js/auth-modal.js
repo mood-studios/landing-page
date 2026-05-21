@@ -6,6 +6,8 @@ import {
   verifySignupOtp,
   verifyOtp,
   resendOtp,
+  sendForgotPasswordOtp,
+  resetForgotPassword,
   getUser,
   isAuthenticated,
   logout,
@@ -35,6 +37,7 @@ import {
 
 let onSuccessCallback = null;
 let resendCooldownTimer = null;
+let forgotSendCooldownTimer = null;
 let isSignupEmailVerified = false;
 
 const OTP_SPAM_NOTE =
@@ -50,7 +53,12 @@ function showPanel(id) {
   const title = document.getElementById('authModalTitle');
   const sub = document.querySelector('.auth-modal-sub');
   if (title) {
-    const titles = { login: 'Log in', register: 'Create account', otp: 'Verify email' };
+    const titles = {
+      login: 'Log in',
+      register: 'Create account',
+      otp: 'Verify email',
+      forgot: 'Reset password',
+    };
     title.textContent = titles[id] || 'Welcome';
   }
   if (sub) {
@@ -58,6 +66,7 @@ function showPanel(id) {
       login: 'Sign in to book and manage your sessions',
       register: 'Create your account to book sessions',
       otp: 'Check your inbox — and Spam if needed',
+      forgot: 'We’ll email you a code to choose a new password',
     };
     sub.textContent = subs[id] || subs.login;
   }
@@ -337,6 +346,121 @@ async function handleOtp(e) {
   }
 }
 
+function setForgotOtpStatus(text, color) {
+  const el = document.getElementById('forgotOtpStatus');
+  if (!el) return;
+  el.textContent = text;
+  if (color) el.style.color = color;
+}
+
+function setForgotSendCooldown(seconds) {
+  const btn = document.getElementById('sendForgotOtpBtn');
+  if (!btn) return;
+
+  clearInterval(forgotSendCooldownTimer);
+  if (seconds <= 0) {
+    btn.disabled = false;
+    btn.textContent = 'Send code';
+    return;
+  }
+
+  let left = seconds;
+  btn.disabled = true;
+  btn.textContent = `Send code (${left}s)`;
+
+  forgotSendCooldownTimer = setInterval(() => {
+    left -= 1;
+    if (left <= 0) {
+      clearInterval(forgotSendCooldownTimer);
+      btn.disabled = false;
+      btn.textContent = 'Send code';
+      return;
+    }
+    btn.textContent = `Send code (${left}s)`;
+  }, 1000);
+}
+
+async function handleSendForgotOtp() {
+  const email = document.getElementById('forgotEmail')?.value.trim();
+  if (!email || !email.includes('@')) {
+    await showAlert('Enter a valid email first.', { variant: 'error' });
+    return;
+  }
+
+  setForgotOtpStatus('Sending code…', '#7a0cd4');
+
+  try {
+    await sendForgotPasswordOtp(email);
+    setForgotOtpStatus('If this email is registered, a code was sent. Check your inbox.', '#2e7d32');
+    document.getElementById('forgotOtp')?.focus();
+    setForgotSendCooldown(60);
+  } catch (err) {
+    setForgotOtpStatus(err.message || 'Could not send code', '#c62828');
+  }
+}
+
+async function handleForgotReset(e) {
+  e.preventDefault();
+  const email = document.getElementById('forgotEmail')?.value.trim();
+  const otp = document.getElementById('forgotOtp')?.value.trim().replace(/\D/g, '');
+  const password = document.getElementById('forgotPassword')?.value;
+  const confirmPassword = document.getElementById('forgotConfirmPassword')?.value;
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+
+  if (!email || !email.includes('@')) {
+    await showAlert('Enter a valid email.', { variant: 'error' });
+    btn.disabled = false;
+    return;
+  }
+
+  if (!/^\d{6}$/.test(otp)) {
+    await showAlert('Enter the 6-digit code from your email.', { variant: 'error' });
+    btn.disabled = false;
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    await showAlert('Passwords do not match.', { variant: 'error' });
+    btn.disabled = false;
+    return;
+  }
+
+  if (!isValidPassword(password)) {
+    await showAlert(PASSWORD_REQUIREMENTS_MESSAGE, {
+      title: 'Password requirements',
+      variant: 'error',
+    });
+    btn.disabled = false;
+    return;
+  }
+
+  try {
+    await resetForgotPassword(email, otp, password);
+    await showAlert('Your password was updated. You can log in now.', {
+      title: 'Password reset',
+      variant: 'success',
+    });
+    document.getElementById('loginEmail').value = email;
+    document.getElementById('loginPassword').value = '';
+    showPanel('login');
+  } catch (err) {
+    await showAlert(err.message, { title: 'Reset failed', variant: 'error' });
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function openForgotPanel() {
+  const loginEmail = document.getElementById('loginEmail')?.value.trim();
+  if (loginEmail) {
+    document.getElementById('forgotEmail').value = loginEmail;
+  }
+  setForgotOtpStatus('');
+  showPanel('forgot');
+  document.getElementById('forgotEmail')?.focus();
+}
+
 async function handleResendOtp() {
   const email = document.getElementById('otpEmail')?.value.trim();
   if (!email) return;
@@ -392,6 +516,18 @@ export function initAuthModal() {
   document.getElementById('verifySignupOtpBtn')?.addEventListener('click', handleVerifySignupOtp);
   document.getElementById('otpForm')?.addEventListener('submit', handleOtp);
   document.getElementById('resendOtpBtn')?.addEventListener('click', handleResendOtp);
+  document.getElementById('forgotForm')?.addEventListener('submit', handleForgotReset);
+  document.getElementById('sendForgotOtpBtn')?.addEventListener('click', handleSendForgotOtp);
+  bindPasswordInputValidation('forgotPassword');
+
+  document.getElementById('showForgot')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openForgotPanel();
+  });
+  document.getElementById('showLoginFromForgot')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    showPanel('login');
+  });
 
   document.getElementById('showRegister')?.addEventListener('click', (e) => {
     e.preventDefault();
