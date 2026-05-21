@@ -39,7 +39,7 @@
             <div class="checkout-form-grid">
               <div class="form-field">
                 <label for="fullName">Full name *</label>
-                <input id="fullName" type="text" required placeholder="Juan Dela Cruz" />
+                <input id="fullName" type="text" required placeholder="Juan Dela Cruz" maxlength="80" autocomplete="name" />
               </div>
               <div class="form-field">
                 <label for="email">Email *</label>
@@ -47,7 +47,7 @@
               </div>
               <div class="form-field checkout-form-full">
                 <label for="phone">Phone *</label>
-                <input id="phone" type="tel" required placeholder="+63 912 345 6789" />
+                <input id="phone" type="tel" required placeholder="09171234567" inputmode="numeric" maxlength="11" autocomplete="tel" />
               </div>
               <div class="form-field checkout-form-full">
                 <label for="notes">Special requests</label>

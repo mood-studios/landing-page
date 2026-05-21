@@ -113,6 +113,10 @@ export const userApi = {
     apiFetch('/users/profile', { method: 'PUT', body: JSON.stringify(body) }),
 };
 
+export const galleryApi = {
+  getByBooking: (bookingId) => apiFetch(`/gallery/booking/${bookingId}`),
+};
+
 export const chatApi = {
   getStudio: () => apiFetch('/chat/studio'),
   getHistory: (receiverId) =>

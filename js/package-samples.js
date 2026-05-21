@@ -7,6 +7,27 @@ function esc(text) {
     .replace(/</g, '&lt;');
 }
 
+/** Split package description into display lines (preserves all detail). */
+export function parseDescriptionLines(desc) {
+  if (!desc) return [];
+  return String(desc)
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+/** Full package details for cards (no truncation). */
+export function renderPackageDescriptionHtml(desc, { emptyFallback = '' } = {}) {
+  const lines = parseDescriptionLines(desc);
+  if (!lines.length) {
+    const text = emptyFallback || 'Package details available when you book.';
+    return `<div class="package-desc package-desc--full package-desc--empty"><span class="package-desc-line">${esc(text)}</span></div>`;
+  }
+  return `<div class="package-desc package-desc--full">${lines
+    .map((line) => `<span class="package-desc-line">${esc(line)}</span>`)
+    .join('')}</div>`;
+}
+
 /** Photo samples for a package (samplePhotos, else service image, else mood logo). */
 export function getSamplePhotos(service) {
   const samples = (service?.samplePhotos || []).filter(Boolean);

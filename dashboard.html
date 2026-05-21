@@ -18,6 +18,7 @@
       <nav class="dash-nav-tabs" aria-label="Dashboard sections">
         <button type="button" class="dash-tab active" data-panel="book">Book</button>
         <button type="button" class="dash-tab" data-panel="bookings">My bookings</button>
+        <button type="button" class="dash-tab" data-panel="gallery">Gallery</button>
         <button type="button" class="dash-tab" data-panel="profile">Profile</button>
       </nav>
       <div class="nav-actions">
@@ -61,6 +62,20 @@
           <button type="button" class="btn btn-purple btn-sm" data-go-panel="book">Book new</button>
         </div>
         <div id="bookingsList" class="bookings-list">
+          <p class="bookings-loading">Loading…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="dash-panel" id="panel-gallery" data-panel="gallery" hidden>
+      <div class="panel">
+        <div class="dashboard-section-head">
+          <div>
+            <h2>My Gallery</h2>
+            <p class="section-lead">Photos from your sessions appear here after the studio uploads them.</p>
+          </div>
+        </div>
+        <div id="galleryHub" class="bookings-list gallery-hub">
           <p class="bookings-loading">Loading…</p>
         </div>
       </div>

@@ -12,7 +12,11 @@ import {
   removeFromCart,
   formatMoney,
 } from './cart.js';
-import { renderPackageMedia, initPackageCarousels } from './package-samples.js';
+import {
+  renderPackageMedia,
+  initPackageCarousels,
+  renderPackageDescriptionHtml,
+} from './package-samples.js';
 
 let categories = [];
 let activeCategoryId = null;
@@ -24,12 +28,6 @@ function showToast(message, type = 'success') {
   box.className = `cart-toast ${type}`;
   box.classList.remove('hidden');
   setTimeout(() => box.classList.add('hidden'), 2500);
-}
-
-function parseDescription(desc) {
-  if (!desc) return '';
-  const lines = desc.split('\n').map((l) => l.trim()).filter(Boolean);
-  return lines.slice(0, 3).join(' · ');
 }
 
 function showPackageCards() {
@@ -56,14 +54,13 @@ function showPackageCards() {
 function renderPackageCard(service) {
   const card = document.createElement('article');
   card.className = 's-card package-offer-card';
-  const desc = parseDescription(service.description) || `${service.duration} min session`;
-
   card.innerHTML = `
     ${renderPackageMedia(service, { alt: service.name })}
     <div class="package-card-body">
       <h3>${service.name}</h3>
       <p class="package-price">${formatMoney(service.price)}</p>
-      <p class="package-desc">${desc}</p>
+      <p class="package-duration">${service.duration} min session</p>
+      ${renderPackageDescriptionHtml(service.description)}
       <button type="button" class="btn-add-package">Add to cart</button>
     </div>
   `;
@@ -166,13 +163,8 @@ window.increaseQty = function increaseQty(index) {
 };
 
 window.decreaseQty = function decreaseQty(index) {
-  const cart = getCart();
-  if (cart[index].qty > 1) {
-    cart[index].qty -= 1;
-    cart[index].schedules.pop();
-    saveCart(cart);
-    loadCartUI();
-  }
+  removeFromCart(index);
+  loadCartUI();
 };
 
 function loadCartUI() {
@@ -287,10 +279,7 @@ export async function initHomePackages(options = {}) {
 
   try {
     const res = await publicApi.getCategories();
-    categories = (res.data || []).filter((c) =>
-      ['Self-Portrait Digital', 'Self-Portrait Pro', 'Photographer Session'].includes(c.name)
-    );
-    if (!categories.length) categories = res.data || [];
+    categories = res.data || [];
 
     if (!categories.length) {
       document.getElementById('packageContainer').innerHTML =

@@ -23,6 +23,14 @@ import {
   isValidPassword,
   PASSWORD_REQUIREMENTS_MESSAGE,
 } from './password.js';
+import {
+  bindFullNameInput,
+  bindPhoneInput,
+  validateFullName,
+  validatePhone11,
+  validateFields,
+  sanitizePhoneDigits,
+} from './form-validation.js';
 
 let onSuccessCallback = null;
 let resendCooldownTimer = null;
@@ -244,13 +252,25 @@ async function handleLogin(e) {
 
 async function handleRegister(e) {
   e.preventDefault();
-  const name = document.getElementById('regName').value.trim();
+  const nameEl = document.getElementById('regName');
+  const phoneEl = document.getElementById('regPhone');
+  const name = nameEl.value.trim();
   const email = document.getElementById('regEmail').value.trim();
-  const phone = document.getElementById('regPhone').value.trim();
+  const phone = sanitizePhoneDigits(phoneEl.value);
   const password = document.getElementById('regPassword').value;
   const confirmPassword = document.getElementById('regConfirmPassword').value;
   const btn = e.target.querySelector('button[type="submit"]');
   btn.disabled = true;
+
+  if (
+    !validateFields([
+      { input: nameEl, error: validateFullName(nameEl.value) },
+      { input: phoneEl, error: validatePhone11(phoneEl.value) },
+    ])
+  ) {
+    btn.disabled = false;
+    return;
+  }
 
   if (password !== confirmPassword) {
     await showAlert('Passwords do not match. Please check both fields and try again.', {
@@ -365,6 +385,8 @@ export function initAuthModal() {
   document.getElementById('loginForm')?.addEventListener('submit', handleLogin);
   document.getElementById('registerForm')?.addEventListener('submit', handleRegister);
   bindPasswordInputValidation('regPassword');
+  bindFullNameInput('regName');
+  bindPhoneInput('regPhone');
   document.getElementById('sendSignupOtpBtn')?.addEventListener('click', handleSendSignupOtp);
   document.getElementById('verifySignupOtpBtn')?.addEventListener('click', handleVerifySignupOtp);
   document.getElementById('otpForm')?.addEventListener('submit', handleOtp);

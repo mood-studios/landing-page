@@ -75,7 +75,9 @@
               <p class="hero-card-title">Studio Sessions</p>
               <p class="hero-card-sub">Available all week</p>
             </div>
-            <div class="hero-card-avatar">MS</div>
+            <div class="hero-card-avatar">
+              <img src="/img/mood_logo.png" alt="Mood Studios" width="36" height="36" />
+            </div>
           </div>
         </div>
         <div class="pill pill-star">⭐ 5.0 rating</div>
@@ -88,8 +90,8 @@
         <p class="hero-featured-tag">Portfolio</p>
         <h2 class="hero-featured-title">Featured sessions</h2>
       </div>
-      <div class="featured-gallery-viewport" id="featuredGallery" aria-label="Featured studio photos">
-        <div class="featured-gallery-track">
+      <div class="featured-gallery" id="featuredGalleryWrap" aria-label="Featured studio photos">
+        <div class="featured-gallery-track" id="featuredGalleryTrack">
           <figure class="featured-gallery-item">
             <img src="/img/frontImage.jpg" alt="Mood Studios session" loading="eager" fetchpriority="high" />
           </figure>
@@ -210,7 +212,7 @@
 
       <section class="auth-card hidden" data-auth-panel="register">
         <form id="registerForm">
-          <div class="form-field"><label for="regName">Full name</label><input id="regName" required /></div>
+          <div class="form-field"><label for="regName">Full name</label><input id="regName" type="text" required autocomplete="name" maxlength="80" /></div>
           <div class="form-field"><label for="regEmail">Email</label><input id="regEmail" type="email" required /></div>
           <div class="form-field auth-email-verify">
             <label for="regEmailOtp">Email verification code</label>
@@ -221,7 +223,7 @@
             </div>
             <p id="signupEmailVerifyStatus" class="auth-email-verify__status muted" aria-live="polite"></p>
           </div>
-          <div class="form-field"><label for="regPhone">Phone</label><input id="regPhone" type="tel" required placeholder="09171234567" /></div>
+          <div class="form-field"><label for="regPhone">Phone</label><input id="regPhone" type="tel" required placeholder="09171234567" inputmode="numeric" maxlength="11" autocomplete="tel" /></div>
           <div class="form-field">
             <label for="regPassword">Password</label>
             <input id="regPassword" type="password" required minlength="8" autocomplete="new-password" aria-describedby="regPasswordHint" />

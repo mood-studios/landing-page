@@ -4,7 +4,6 @@ import { getSamplePhotos } from './package-samples.js';
 
 const FALLBACK_PHOTOS = ['/img/frontImage.jpg'];
 const MAX_FEATURED = 12;
-const MARQUEE_SPEED = 42;
 
 function esc(text) {
   return String(text)
@@ -40,17 +39,17 @@ function renderGalleryItem(src, index, { eager = false } = {}) {
   `;
 }
 
+/** Same loop pattern as the package ticker: one set of items, duplicated for seamless scroll. */
 function renderGallery(photos) {
-  return photos.map((src, i) => renderGalleryItem(src, i, { eager: true })).join('');
+  const items = photos.map((src, i) => renderGalleryItem(src, i, { eager: true })).join('');
+  if (photos.length <= 1) return items;
+  return items + items;
 }
 
-function setGalleryContent(viewport, photos) {
-  const track = viewport.querySelector('.featured-gallery-track');
+function setGalleryContent(track, photos) {
   if (!track || !photos.length) return;
   track.innerHTML = renderGallery(photos);
-  viewport.classList.remove('featured-gallery-viewport--marquee');
-  track.style.removeProperty('--marquee-duration');
-  viewport.classList.add('featured-gallery--ready');
+  track.classList.toggle('featured-gallery-track--scroll', photos.length > 1);
 }
 
 function whenImagesReady(track) {
@@ -69,26 +68,11 @@ function whenImagesReady(track) {
   );
 }
 
-function initMarquee(viewport) {
-  const track = viewport.querySelector('.featured-gallery-track');
-  if (!track || track.children.length <= 1) return;
-
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reducedMotion) return;
-
-  requestAnimationFrame(() => {
-    const overflows = track.scrollWidth > viewport.clientWidth + 8;
-    if (!overflows) return;
-
-    [...track.children].forEach((item) => {
-      track.appendChild(item.cloneNode(true));
-    });
-
-    const halfWidth = track.scrollWidth / 2;
-    const duration = Math.max(18, halfWidth / MARQUEE_SPEED);
-    track.style.setProperty('--marquee-duration', `${duration}s`);
-    viewport.classList.add('featured-gallery-viewport--marquee');
-  });
+function syncHeroPhoto(photos) {
+  const heroMain = document.getElementById('hero-main-photo');
+  if (!heroMain || !photos[0]) return;
+  heroMain.src = photos[0];
+  heroMain.alt = 'Mood Studios featured session';
 }
 
 function urlsFromFeaturedResponse(data) {
@@ -102,9 +86,8 @@ function urlsFromFeaturedResponse(data) {
 }
 
 export async function initFeaturedPhotos() {
-  const viewport = document.getElementById('featuredGallery');
-  const heroMain = document.getElementById('hero-main-photo');
-  if (!viewport) return;
+  const track = document.getElementById('featuredGalleryTrack');
+  if (!track) return;
 
   let photos = [...FALLBACK_PHOTOS];
 
@@ -122,23 +105,16 @@ export async function initFeaturedPhotos() {
     /* keep fallbacks */
   }
 
-  setGalleryContent(viewport, photos);
+  setGalleryContent(track, photos);
+  await whenImagesReady(track);
+  syncHeroPhoto(photos);
 
-  const track = viewport.querySelector('.featured-gallery-track');
-  if (track) await whenImagesReady(track);
-  initMarquee(viewport);
-
-  if (heroMain && photos[0]) {
-    heroMain.src = photos[0];
-    heroMain.alt = 'Mood Studios featured session';
-  }
-
-  const items = track?.children || [];
-  if (items.length > 1 && window.anime) {
+  const originals = photos.length;
+  if (originals > 1 && window.anime) {
+    const items = [...track.querySelectorAll('.featured-gallery-item')].slice(0, originals);
     anime({
       targets: items,
       opacity: [0, 1],
-      translateY: [12, 0],
       duration: 500,
       delay: anime.stagger(60),
       easing: 'easeOutExpo',

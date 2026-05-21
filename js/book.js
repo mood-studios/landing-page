@@ -11,7 +11,11 @@ import {
   formatMoney,
 } from './cart.js';
 import { initNav } from './nav.js';
-import { renderPackageMedia, initPackageCarousels } from './package-samples.js';
+import {
+  renderPackageMedia,
+  initPackageCarousels,
+  renderPackageDescriptionHtml,
+} from './package-samples.js';
 
 let categories = [];
 let activeCategoryId = null;
@@ -25,13 +29,7 @@ function showToast(message, type = 'success') {
   setTimeout(() => box.classList.add('hidden'), 2500);
 }
 
-function parseDescription(desc) {
-  if (!desc) return [];
-  return desc.split('\n').map((l) => l.trim()).filter(Boolean);
-}
-
 function renderPackageCard(service) {
-  const lines = parseDescription(service.description);
   const card = document.createElement('article');
   card.className = 'package-card';
 
@@ -41,7 +39,7 @@ function renderPackageCard(service) {
       <h3>${service.name}</h3>
       <p class="package-price">${formatMoney(service.price)}</p>
       <p class="package-duration">${service.duration} min session</p>
-      <div class="package-desc">${lines.slice(0, 4).map((l) => `<span>${l}</span>`).join('')}</div>
+      ${renderPackageDescriptionHtml(service.description)}
       <button type="button" class="btn-add-cart" data-id="${service._id}">
         <img src="/icons/cart.svg" alt="" width="16" height="16">
         Add to cart
@@ -144,13 +142,8 @@ window.increaseQty = function increaseQty(index) {
 };
 
 window.decreaseQty = function decreaseQty(index) {
-  const cart = getCart();
-  if (cart[index].qty > 1) {
-    cart[index].qty -= 1;
-    cart[index].schedules.pop();
-    saveCart(cart);
-    loadCartUI();
-  }
+  removeFromCart(index);
+  loadCartUI();
 };
 
 function loadCartUI() {

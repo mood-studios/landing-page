@@ -11,6 +11,14 @@ import {
 import { getUser, requireAuth, syncProfileFields } from './auth.js';
 import { initNav } from './nav.js';
 import { showAlert, showConfirm } from './app-dialog.js';
+import {
+  bindFullNameInput,
+  bindPhoneInput,
+  validateFullName,
+  validatePhone11,
+  validateFields,
+  sanitizePhoneDigits,
+} from './form-validation.js';
 
 const availabilityCache = {};
 
@@ -235,7 +243,7 @@ function fillContactForm() {
   const phoneEl = document.getElementById('phone');
   if (nameEl && user.name) nameEl.value = user.name;
   if (emailEl && user.email) emailEl.value = user.email;
-  if (phoneEl && user.phone) phoneEl.value = user.phone;
+  if (phoneEl && user.phone) phoneEl.value = sanitizePhoneDigits(user.phone);
 }
 
 async function completeBooking() {
@@ -249,19 +257,24 @@ async function completeBooking() {
     return;
   }
 
-  const fullName = document.getElementById('fullName').value.trim();
+  const fullNameEl = document.getElementById('fullName');
+  const phoneEl = document.getElementById('phone');
+  const fullName = fullNameEl.value.trim();
   const email = document.getElementById('email').value.trim();
-  const phone = document.getElementById('phone').value.trim();
+  const normalizedPhone = sanitizePhoneDigits(phoneEl.value);
   const notes = document.getElementById('notes')?.value.trim() || '';
 
-  if (!fullName || !email || !phone) {
-    await showAlert('Please complete contact information.', { variant: 'error' });
+  if (
+    !validateFields([
+      { input: fullNameEl, error: validateFullName(fullNameEl.value) },
+      { input: phoneEl, error: validatePhone11(phoneEl.value) },
+    ])
+  ) {
     return;
   }
 
-  const normalizedPhone = phone.replace(/[\s\-().]/g, '');
-  if (!/^(\+?63|0)9\d{9}$/.test(normalizedPhone)) {
-    await showAlert('Enter a valid Philippine mobile number (e.g. 09171234567).', { variant: 'error' });
+  if (!email) {
+    await showAlert('Email is required.', { variant: 'error' });
     return;
   }
 
@@ -296,11 +309,14 @@ async function completeBooking() {
     }
 
     const selectedIndices = getSelectedIndices();
-    removeCheckedOutItems(selectedIndices);
 
     sessionStorage.setItem(
       'mood_checkout_payment',
-      JSON.stringify({ bookingIds, totalAmount })
+      JSON.stringify({
+        bookingIds,
+        totalAmount,
+        selectedCartIndices: [...selectedIndices],
+      })
     );
     sessionStorage.removeItem('mood_pending_payments');
     sessionStorage.removeItem('mood_payment_total');
@@ -317,6 +333,8 @@ async function completeBooking() {
 
 async function init() {
   if (!(await requireAuth())) return;
+  bindFullNameInput('fullName');
+  bindPhoneInput('phone');
   initNav();
   fillContactForm();
   loadCheckoutCart();

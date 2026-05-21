@@ -1,6 +1,6 @@
 import { paymentApi } from './api.js';
 import { requireAuth, logout, fetchSession } from './auth.js';
-import { formatMoney } from './cart.js';
+import { formatMoney, removeCheckedOutItems } from './cart.js';
 import { showAlert } from './app-dialog.js';
 
 const CHECKOUT_KEY = 'mood_checkout_payment';
@@ -168,6 +168,12 @@ async function confirmPaid(testConfirm = false) {
 
   try {
     await paymentApi.confirm(session.paymentId, testConfirm);
+
+    const checkout = loadCheckoutPayment();
+    if (checkout.selectedCartIndices?.length) {
+      removeCheckedOutItems(new Set(checkout.selectedCartIndices));
+    }
+
     sessionStorage.removeItem(CHECKOUT_KEY);
     sessionStorage.removeItem(SESSION_KEY);
     sessionStorage.removeItem('mood_pending_payments');

@@ -1,4 +1,4 @@
-import { bookingApi } from './api.js';
+import { bookingApi, galleryApi } from './api.js';
 import { getUser, requireAuth, logout, fetchSession, syncProfileFields } from './auth.js';
 import { initHomePackages } from './home-packages.js';
 import { initChatWidget } from './chat-widget.js';
@@ -7,6 +7,7 @@ import { formatMoney } from './cart.js';
 const PANEL_COPY = {
   book: 'Browse packages and book your next session.',
   bookings: 'View and track your scheduled sessions.',
+  gallery: 'View photos from your completed sessions.',
   profile: 'Your account details.',
 };
 
@@ -301,6 +302,7 @@ function showPanel(id, { updateHash = true } = {}) {
   if (sub) sub.textContent = PANEL_COPY[id] || PANEL_COPY.book;
 
   if (id === 'bookings') loadBookings();
+  if (id === 'gallery') loadGalleryHub();
   if (id !== 'profile' && profileEditing) cancelProfileEdit();
   if (updateHash) history.replaceState(null, '', `#${id}`);
 }
@@ -312,6 +314,125 @@ function initTabs() {
   document.querySelectorAll('[data-go-panel]').forEach((el) => {
     el.addEventListener('click', () => showPanel(el.dataset.goPanel));
   });
+}
+
+function renderGalleryAlbums(albums) {
+  if (!albums?.length) {
+    return '<p class="gallery-empty">No photos uploaded for this session yet. Check back after your shoot.</p>';
+  }
+
+  return albums
+    .map(
+      (album) => `
+      <div class="gallery-album">
+        <h4 class="gallery-album-title">${escapeHtml(album.albumName || 'Album')}</h4>
+        ${
+          album.photos?.length
+            ? `<div class="gallery-photo-grid">${album.photos
+                .map(
+                  (photo) => `
+                <a href="${escapeHtml(photo.url)}" class="gallery-photo" target="_blank" rel="noopener noreferrer">
+                  <img src="${escapeHtml(photo.url)}" alt="${escapeHtml(photo.caption || 'Session photo')}" loading="lazy" />
+                </a>
+              `
+                )
+                .join('')}</div>`
+            : '<p class="gallery-empty">This album is empty.</p>'
+        }
+      </div>
+    `
+    )
+    .join('');
+}
+
+function bindGalleryToggles(hub) {
+  hub.querySelectorAll('.gallery-row-toggle').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const item = btn.closest('.gallery-item');
+      const detail = item?.querySelector('.gallery-detail');
+      if (!detail) return;
+
+      const isOpen = item.classList.contains('is-open');
+      hub.querySelectorAll('.gallery-item.is-open').forEach((el) => {
+        el.classList.remove('is-open');
+        el.querySelector('.gallery-row-toggle')?.setAttribute('aria-expanded', 'false');
+        el.querySelector('.gallery-detail')?.classList.add('hidden');
+      });
+
+      if (isOpen) return;
+
+      const id = btn.dataset.bookingId;
+      item.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+      detail.classList.remove('hidden');
+      detail.innerHTML = '<p class="bookings-loading">Loading photos…</p>';
+
+      try {
+        const res = await galleryApi.getByBooking(id);
+        detail.innerHTML = renderGalleryAlbums(res.data || []);
+      } catch (err) {
+        detail.innerHTML = `<p class="bookings-empty error">${escapeHtml(err.message)}</p>`;
+      }
+    });
+  });
+}
+
+function renderGalleryHub(bookings) {
+  const hub = document.getElementById('galleryHub');
+  if (!hub) return;
+
+  const eligible = bookings.filter((b) => {
+    const status = b.bookingStatus || '';
+    return status === 'completed' || status === 'confirmed';
+  });
+
+  const list = eligible.length ? eligible : bookings;
+
+  if (!list.length) {
+    hub.innerHTML = `
+      <p class="bookings-empty">No sessions yet.</p>
+      <button type="button" class="btn btn-purple" style="margin-top:1rem" data-go-panel="book">Book a session</button>
+    `;
+    hub.querySelector('[data-go-panel]')?.addEventListener('click', () => showPanel('book'));
+    return;
+  }
+
+  hub.innerHTML = list
+    .map((b) => {
+      const id = String(b._id);
+      const st = statusLabel(b);
+      return `
+        <article class="gallery-item booking-item">
+          <button type="button" class="booking-row gallery-row-toggle" data-booking-id="${id}" aria-expanded="false">
+            <div class="booking-row-main">
+              <h3>${escapeHtml(serviceNames(b))}</h3>
+              <p class="booking-meta">${escapeHtml(formatDate(b.bookingDate))} · ${escapeHtml(b.bookingTime || '—')}</p>
+            </div>
+            <div class="booking-row-end">
+              <span class="booking-status booking-status--${st.class}">${st.text}</span>
+              <span class="booking-chevron" aria-hidden="true">›</span>
+            </div>
+          </button>
+          <div class="gallery-detail booking-detail hidden" id="gallery-detail-${id}"></div>
+        </article>
+      `;
+    })
+    .join('');
+
+  bindGalleryToggles(hub);
+}
+
+async function loadGalleryHub() {
+  const hub = document.getElementById('galleryHub');
+  if (!hub) return;
+  hub.innerHTML = '<p class="bookings-loading">Loading…</p>';
+
+  try {
+    const res = await bookingApi.getMyBookings();
+    renderGalleryHub(res.data || []);
+  } catch (err) {
+    hub.innerHTML = `<p class="bookings-empty error">${escapeHtml(err.message)}</p>`;
+  }
 }
 
 async function loadBookings() {
@@ -338,7 +459,9 @@ async function init() {
   initChatWidget();
   initTabs();
   const hash = location.hash.replace('#', '');
-  showPanel(['book', 'bookings', 'profile'].includes(hash) ? hash : 'book', { updateHash: false });
+  showPanel(['book', 'bookings', 'gallery', 'profile'].includes(hash) ? hash : 'book', {
+    updateHash: false,
+  });
 
   document.getElementById('logoutBtn')?.addEventListener('click', () => logout());
 
