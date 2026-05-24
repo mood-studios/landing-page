@@ -2,6 +2,7 @@ import { paymentApi } from './api.js';
 import { requireAuth, logout, fetchSession } from './auth.js';
 import { formatMoney, removeCheckedOutItems } from './cart.js';
 import { showAlert } from './app-dialog.js';
+import { mountPaymentCountdown } from './payment-countdown.js';
 
 const CHECKOUT_KEY = 'mood_checkout_payment';
 const SESSION_KEY = 'mood_payment_session';
@@ -9,6 +10,7 @@ const SESSION_KEY = 'mood_payment_session';
 let bookingIds = [];
 let session = null;
 let busy = false;
+let stopCountdown = () => {};
 
 function loadCheckoutPayment() {
   const params = new URLSearchParams(window.location.search);
@@ -71,8 +73,26 @@ function savePaymentSession() {
       isTestMode: session.isTestMode,
       linkError: session.linkError,
       bookingIds,
+      paymentDeadlineAt: session.paymentDeadlineAt,
+      paymentHoldMinutes: session.paymentHoldMinutes,
     })
   );
+}
+
+function renderPaymentCountdown() {
+  stopCountdown();
+  const el = document.getElementById('paymentCountdown');
+  if (!el || !session?.paymentDeadlineAt) {
+    el?.classList.add('hidden');
+    return;
+  }
+
+  stopCountdown = mountPaymentCountdown(el, session.paymentDeadlineAt, {
+    onExpired: () => {
+      document.getElementById('openPaymongoBtn')?.setAttribute('disabled', 'true');
+      document.getElementById('confirmPaidBtn')?.setAttribute('disabled', 'true');
+    },
+  });
 }
 
 function friendlyError(message) {
@@ -124,6 +144,8 @@ function renderSession() {
   const canTestSkip = session.isTestMode || !hasUrl;
   testBtn?.classList.toggle('hidden', !canTestSkip);
   testBtn.disabled = busy;
+
+  renderPaymentCountdown();
 }
 
 async function startSession() {
@@ -149,6 +171,8 @@ async function startSession() {
     amount: data.amount ?? payment.amount ?? 0,
     isTestMode: Boolean(data.isTestMode),
     linkError: data.linkError || null,
+    paymentDeadlineAt: data.paymentDeadlineAt || null,
+    paymentHoldMinutes: data.paymentHoldMinutes || 15,
   };
 
   savePaymentSession();

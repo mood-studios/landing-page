@@ -21,6 +21,34 @@ import {
 } from './form-validation.js';
 
 const availabilityCache = {};
+let blockedDates = new Set();
+let closedWeekdays = [];
+
+function isDateUnavailable(value) {
+  if (!value) return null;
+  if (blockedDates.has(value)) {
+    return 'This date is not available for booking (studio closed).';
+  }
+  const day = new Date(`${value}T12:00:00`).getDay();
+  if (closedWeekdays.includes(day)) {
+    return 'The studio is closed on this day of the week.';
+  }
+  return null;
+}
+
+async function loadBookingSchedule() {
+  try {
+    const [blockedRes, scheduleRes] = await Promise.all([
+      publicApi.getBlockedDays(),
+      publicApi.getSchedule(),
+    ]);
+    blockedDates = new Set(blockedRes.data || []);
+    closedWeekdays = scheduleRes.data?.closedWeekdays || [];
+  } catch {
+    blockedDates = new Set();
+    closedWeekdays = [];
+  }
+}
 
 function schedKey(cartIndex, unitIndex) {
   return `${cartIndex}_${unitIndex}`;
@@ -47,6 +75,17 @@ async function fetchSlots(cartIndex, date, unitIndex, duration) {
   const key = schedKey(cartIndex, unitIndex);
   const select = document.querySelector(`select[data-sched="${key}"]`);
   if (!select) return;
+
+  const unavailable = isDateUnavailable(date);
+  if (unavailable) {
+    select.innerHTML = '<option value="">Date not available</option>';
+    select.disabled = true;
+    const area = select.closest('.schedule-row')?.querySelector('.availability-area');
+    if (area) {
+      area.innerHTML = `<span class="avail-msg error">${unavailable}</span>`;
+    }
+    return;
+  }
 
   try {
     const res = await publicApi.getAvailability(date, duration);
@@ -108,6 +147,13 @@ window.updateDate = function updateDate(cartIndex, value, unitIndex = 0) {
   }
   if (value > maxDate) {
     showAlert('Please select a date within the next 3 months.', { variant: 'error' });
+    loadCheckoutCart();
+    return;
+  }
+
+  const unavailable = isDateUnavailable(value);
+  if (unavailable) {
+    showAlert(unavailable, { variant: 'error' });
     loadCheckoutCart();
     return;
   }
@@ -287,6 +333,12 @@ async function completeBooking() {
     const qty = item.qty || 1;
     for (let u = 0; u < qty; u++) {
       const sched = item.schedules[u];
+      const unavailable = isDateUnavailable(sched.date);
+      if (unavailable) {
+        await showAlert(unavailable, { variant: 'error' });
+        loadCheckoutCart();
+        return;
+      }
       const res = await publicApi.getAvailability(sched.date, item.duration || 60);
       const slot = (res.data?.slots || []).find((s) => s.value === sched.time);
       if (!slot?.available) {
@@ -376,6 +428,7 @@ async function completeBooking() {
 
 async function init() {
   if (!(await requireAuth())) return;
+  await loadBookingSchedule();
   bindFullNameInput('fullName');
   bindPhoneInput('phone');
   initNav();

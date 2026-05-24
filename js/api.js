@@ -67,6 +67,8 @@ export const publicApi = {
     if (durationMinutes) params.set('durationMinutes', String(durationMinutes));
     return apiFetch(`/public/availability?${params}`);
   },
+  getBlockedDays: () => apiFetch('/public/blocked-days'),
+  getSchedule: () => apiFetch('/public/schedule'),
 };
 
 export const authApi = {

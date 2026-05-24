@@ -4,6 +4,7 @@ import { getUser, requireAuth, logout, fetchSession, syncProfileFields } from '.
 import { initHomePackages } from './home-packages.js';
 import { initChatWidget } from './chat-widget.js';
 import { showAlert, showConfirm } from './app-dialog.js';
+import { bookingNeedsPaymentCountdown, mountPaymentCountdown } from './payment-countdown.js';
 import { formatMoney } from './cart.js';
 import { initSourceGuard } from './source-guard.js';
 
@@ -77,6 +78,20 @@ function formatStatusText(value) {
 }
 
 let bookingsById = new Map();
+const bookingCountdownCleanups = new Map();
+
+function stopBookingCountdown(bookingId) {
+  const stop = bookingCountdownCleanups.get(String(bookingId));
+  if (stop) {
+    stop();
+    bookingCountdownCleanups.delete(String(bookingId));
+  }
+}
+
+function stopAllBookingCountdowns() {
+  bookingCountdownCleanups.forEach((stop) => stop());
+  bookingCountdownCleanups.clear();
+}
 
 function renderServiceBlock(service) {
   const lines = (service.description || '')
@@ -114,6 +129,7 @@ function renderBookingDetailHtml(booking) {
     </dl>
     <h4 class="booking-detail-services-title">Package details</h4>
     ${services.length ? services.map(renderServiceBlock).join('') : '<p class="booking-service-desc-empty">No services listed.</p>'}
+    ${bookingNeedsPaymentCountdown(booking) ? `<p class="booking-payment-countdown" id="booking-countdown-${escapeHtml(String(booking._id))}" role="status" aria-live="polite"></p>` : ''}
     <div class="booking-detail-actions">
       ${needsPayment(booking) ? `<a href="/payment.html?bookingId=${booking._id}" class="btn btn-purple btn-sm">Pay now</a>` : ''}
       ${canCancelBooking(booking) ? `<button type="button" class="btn btn-ghost btn-sm booking-cancel-btn" data-booking-id="${escapeHtml(String(booking._id))}">Cancel booking</button>` : ''}
@@ -198,6 +214,18 @@ function bindBookingToggles(list) {
         bookingsById.set(id, booking);
         detail.innerHTML = renderBookingDetailHtml(booking);
         bindBookingDetailActions(detail, id);
+        if (bookingNeedsPaymentCountdown(booking)) {
+          stopBookingCountdown(id);
+          const countdownEl = detail.querySelector(`#booking-countdown-${id}`);
+          if (countdownEl) {
+            bookingCountdownCleanups.set(
+              id,
+              mountPaymentCountdown(countdownEl, booking.paymentDeadlineAt, {
+                onExpired: () => loadBookings(),
+              })
+            );
+          }
+        }
       } catch (err) {
         detail.innerHTML = `<p class="bookings-empty error">${escapeHtml(err.message)}</p>`;
       }
@@ -208,6 +236,8 @@ function bindBookingToggles(list) {
 function renderBookings(bookings) {
   const list = document.getElementById('bookingsList');
   if (!list) return;
+
+  stopAllBookingCountdowns();
 
   if (!bookings.length) {
     list.innerHTML = `
@@ -232,6 +262,7 @@ function renderBookings(bookings) {
             </div>
             <div class="booking-row-end">
               <span class="booking-status booking-status--${st.class}">${st.text}</span>
+              ${bookingNeedsPaymentCountdown(b) ? `<span class="booking-countdown-pill" data-countdown-for="${id}"></span>` : ''}
               ${amount ? `<span class="booking-amount">${amount}</span>` : ''}
               <span class="booking-chevron" aria-hidden="true">›</span>
             </div>
@@ -243,6 +274,19 @@ function renderBookings(bookings) {
     .join('');
 
   bindBookingToggles(list);
+
+  bookings.forEach((b) => {
+    if (!bookingNeedsPaymentCountdown(b)) return;
+    const pill = list.querySelector(`[data-countdown-for="${String(b._id)}"]`);
+    if (!pill) return;
+    bookingCountdownCleanups.set(
+      String(b._id),
+      mountPaymentCountdown(pill, b.paymentDeadlineAt, {
+        compact: true,
+        onExpired: () => loadBookings(),
+      })
+    );
+  });
 }
 
 let profileEditing = false;

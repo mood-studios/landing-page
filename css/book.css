@@ -1750,6 +1750,50 @@ body.auth-terms-modal-open { overflow: hidden; }
   color: var(--purple, #960ffa);
 }
 
+.payment-countdown,
+.booking-payment-countdown {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.65rem;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+}
+
+.payment-countdown.is-expired,
+.booking-payment-countdown.is-expired {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.booking-countdown-pill,
+.payment-countdown--compact {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.4rem;
+  background: var(--purple-pale, #f3e6fe);
+  color: var(--purple, #960ffa);
+  border: 1px solid rgba(150, 15, 250, 0.25);
+}
+
+.booking-countdown-pill.is-expired,
+.payment-countdown--compact.is-expired {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+.booking-payment-countdown {
+  margin: 0.75rem 0 0.5rem;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
 .payment-amount-card {
   background: #fff;
   border-radius: 1.25rem;
