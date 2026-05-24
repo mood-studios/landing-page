@@ -4,6 +4,12 @@ import { showConfirm } from './app-dialog.js';
 let currentUser = null;
 let sessionPromise = null;
 
+async function syncBookingDraft(user) {
+  if (!user?._id) return null;
+  const { restoreBookingDraft } = await import('./booking-draft.js');
+  return restoreBookingDraft(user);
+}
+
 function userFromAuthData(data) {
   if (!data) return null;
   const { token, ...user } = data;
@@ -22,6 +28,7 @@ export async function fetchSession() {
     try {
       const res = await authApi.me();
       currentUser = res.data || null;
+      if (currentUser) await syncBookingDraft(currentUser);
     } catch {
       currentUser = null;
       setAuthToken(null);
@@ -55,6 +62,7 @@ export async function requireAuth() {
 export async function login(email, password) {
   const res = await authApi.login(email, password);
   currentUser = userFromAuthData(res.data);
+  if (currentUser) await syncBookingDraft(currentUser);
   return currentUser;
 }
 
@@ -75,6 +83,7 @@ export async function register({ name, email, password, phone, recaptchaToken })
     recaptchaToken,
   });
   currentUser = userFromAuthData(res.data);
+  if (currentUser) await syncBookingDraft(currentUser);
   return currentUser;
 }
 
@@ -85,6 +94,7 @@ export async function resendOtp(email) {
 export async function verifyOtp(email, otp) {
   const res = await authApi.verifyOtp(email, otp);
   currentUser = userFromAuthData(res.data);
+  if (currentUser) await syncBookingDraft(currentUser);
   return currentUser;
 }
 
@@ -121,5 +131,7 @@ export async function logout(options = {}) {
   }
   setAuthToken(null);
   currentUser = null;
+  const { resetDraftSession } = await import('./booking-draft.js');
+  resetDraftSession();
   window.location.href = '/';
 }

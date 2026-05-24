@@ -1,6 +1,11 @@
 import { paymentApi } from './api.js';
 import { requireAuth, logout, fetchSession } from './auth.js';
 import { formatMoney, removeCheckedOutItems } from './cart.js';
+import {
+  clearBookingDraft,
+  flushBookingDraftSave,
+  saveCheckoutPaymentDraft,
+} from './booking-draft.js';
 import { showAlert } from './app-dialog.js';
 import { mountPaymentCountdown } from './payment-countdown.js';
 
@@ -77,6 +82,16 @@ function savePaymentSession() {
       paymentHoldMinutes: session.paymentHoldMinutes,
     })
   );
+  saveCheckoutPaymentDraft(loadCheckoutPayment(), {
+    paymentId: session.paymentId,
+    checkoutUrl: session.checkoutUrl,
+    amount: session.amount,
+    isTestMode: session.isTestMode,
+    linkError: session.linkError,
+    bookingIds,
+    paymentDeadlineAt: session.paymentDeadlineAt,
+    paymentHoldMinutes: session.paymentHoldMinutes,
+  });
 }
 
 function renderPaymentCountdown() {
@@ -202,6 +217,7 @@ async function confirmPaid(testConfirm = false) {
     sessionStorage.removeItem(SESSION_KEY);
     sessionStorage.removeItem('mood_pending_payments');
     sessionStorage.removeItem('mood_payment_total');
+    await clearBookingDraft();
     window.location.href = '/success.html';
   } catch (err) {
     await showAlert(friendlyError(err.message), { title: 'Payment', variant: 'error' });
@@ -239,6 +255,10 @@ async function init() {
   document.getElementById('openPaymongoBtn')?.addEventListener('click', openPaymongo);
   document.getElementById('confirmPaidBtn')?.addEventListener('click', () => confirmPaid(false));
   document.getElementById('testConfirmBtn')?.addEventListener('click', () => confirmPaid(true));
+
+  window.addEventListener('beforeunload', () => {
+    flushBookingDraftSave();
+  });
 
   try {
     await startSession();

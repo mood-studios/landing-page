@@ -1357,6 +1357,38 @@ body.auth-terms-modal-open { overflow: hidden; }
   margin-bottom: 1.5rem;
 }
 
+.resume-banner-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.resume-banner-wrap.hidden {
+  display: none;
+}
+
+.resume-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.15rem;
+  border-radius: 12px;
+  border: 1px solid rgba(107, 70, 193, 0.25);
+  background: linear-gradient(135deg, rgba(107, 70, 193, 0.08) 0%, rgba(255, 255, 255, 0.95) 100%);
+}
+
+.resume-banner__text strong {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+
+.resume-banner__text p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted, #6b7280);
+}
+
 .dashboard-profile { margin-bottom: 1rem; }
 
 .profile-head {

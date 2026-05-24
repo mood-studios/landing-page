@@ -6,6 +6,7 @@ import { initChatWidget } from './chat-widget.js';
 import { showAlert, showConfirm } from './app-dialog.js';
 import { bookingNeedsPaymentCountdown, mountPaymentCountdown } from './payment-countdown.js';
 import { formatMoney } from './cart.js';
+import { getLastDraftSummary, mountResumeBanner, refreshDraftSummary } from './booking-draft.js';
 import { initSourceGuard } from './source-guard.js';
 
 function mountDashboardPage() {
@@ -634,30 +635,39 @@ async function loadBookings() {
 }
 
 async function init() {
-  initSourceGuard();
-  mountDashboardPage();
+  try {
+    initSourceGuard();
+    mountDashboardPage();
 
-  if (!(await requireAuth())) return;
+    if (!(await requireAuth())) return;
 
-  await fetchSession();
-  fillProfile(getUser());
-  initProfileEdit();
-  initChatWidget();
-  initTabs();
-  const hash = location.hash.replace('#', '');
-  showPanel(['book', 'bookings', 'gallery', 'profile'].includes(hash) ? hash : 'book', {
-    updateHash: false,
-  });
+    await fetchSession();
+    fillProfile(getUser());
+    initProfileEdit();
+    initChatWidget();
+    initTabs();
+    mountResumeBanner('resumeBanner', refreshDraftSummary() ?? getLastDraftSummary());
+    const hash = location.hash.replace('#', '');
+    showPanel(['book', 'bookings', 'gallery', 'profile'].includes(hash) ? hash : 'book', {
+      updateHash: false,
+    });
 
-  document.getElementById('logoutBtn')?.addEventListener('click', () => logout());
+    document.getElementById('logoutBtn')?.addEventListener('click', () => logout());
 
-  await initHomePackages({
-    onCheckout: () => {
-      window.location.href = '/checkout.html';
-    },
-  });
+    await initHomePackages({
+      onCheckout: () => {
+        window.location.href = '/checkout.html';
+      },
+    });
 
-  loadBookings();
+    loadBookings();
+  } catch (err) {
+    console.error('Dashboard failed to load:', err);
+    const root = document.getElementById('app');
+    if (root && !root.querySelector('.dashboard-main')) {
+      root.innerHTML = `<main class="page-main"><p class="form-error">Could not load dashboard. Try refreshing the page.</p></main>`;
+    }
+  }
 }
 
 init();

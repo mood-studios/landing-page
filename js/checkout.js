@@ -12,6 +12,11 @@ import { getUser, requireAuth, syncProfileFields } from './auth.js';
 import { initNav } from './nav.js';
 import { showAlert, showConfirm } from './app-dialog.js';
 import {
+  bindCheckoutFormDraftSave,
+  flushBookingDraftSave,
+  saveCheckoutPaymentDraft,
+} from './booking-draft.js';
+import {
   bindFullNameInput,
   bindPhoneInput,
   validateFullName,
@@ -224,6 +229,9 @@ window.removeCheckoutFromCart = async function removeCheckoutFromCart(index, uni
   }
   saveCart(cart);
   loadCheckoutCart();
+  if (cart.length === 0) {
+    await flushBookingDraftSave();
+  }
 };
 
 function validateCart(items) {
@@ -313,9 +321,9 @@ function fillContactForm() {
   const nameEl = document.getElementById('fullName');
   const emailEl = document.getElementById('email');
   const phoneEl = document.getElementById('phone');
-  if (nameEl && user.name) nameEl.value = user.name;
-  if (emailEl && user.email) emailEl.value = user.email;
-  if (phoneEl && user.phone) phoneEl.value = sanitizePhoneDigits(user.phone);
+  if (nameEl && user.name && !nameEl.value.trim()) nameEl.value = user.name;
+  if (emailEl && user.email && !emailEl.value.trim()) emailEl.value = user.email;
+  if (phoneEl && user.phone && !phoneEl.value.trim()) phoneEl.value = sanitizePhoneDigits(user.phone);
 }
 
 async function completeBooking() {
@@ -413,6 +421,11 @@ async function completeBooking() {
         selectedCartIndices: [...selectedIndices],
       })
     );
+    await saveCheckoutPaymentDraft({
+      bookingIds,
+      totalAmount,
+      selectedCartIndices: [...selectedIndices],
+    });
     sessionStorage.removeItem('mood_pending_payments');
     sessionStorage.removeItem('mood_payment_total');
     window.location.href = '/payment.html';
@@ -433,7 +446,11 @@ async function init() {
   bindPhoneInput('phone');
   initNav();
   fillContactForm();
+  bindCheckoutFormDraftSave();
   loadCheckoutCart();
+  window.addEventListener('beforeunload', () => {
+    flushBookingDraftSave();
+  });
 
   document.getElementById('completeBookingBtn')?.addEventListener('click', completeBooking);
   document.getElementById('logoutBtn')?.addEventListener('click', () => {

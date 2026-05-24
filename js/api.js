@@ -101,6 +101,13 @@ export const authApi = {
   logout: () => apiFetch('/auth/logout', { method: 'POST' }),
 };
 
+export const bookingDraftApi = {
+  get: () => apiFetch('/booking-drafts/me'),
+  save: (body) =>
+    apiFetch('/booking-drafts/me', { method: 'PUT', body: JSON.stringify(body) }),
+  clear: () => apiFetch('/booking-drafts/me', { method: 'DELETE' }),
+};
+
 export const bookingApi = {
   getMyBookings: () => apiFetch(`/bookings/my?_=${Date.now()}`),
   getBooking: (id) => apiFetch(`/bookings/${id}?_=${Date.now()}`),
