@@ -424,7 +424,7 @@ async function deleteAccount() {
   }
 
   const ok = await showConfirm(
-    'This permanently deletes your account and cannot be undone. Continue?',
+    "Delete your account? You will be signed out and can't sign in again. Bookings and messages stay in the studio's records. Contact the studio if you change your mind.",
     {
       title: 'Delete account?',
       confirmText: 'Delete account',
