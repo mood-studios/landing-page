@@ -6,7 +6,12 @@ import { initChatWidget } from './chat-widget.js';
 import { showAlert, showConfirm } from './app-dialog.js';
 import { bookingNeedsPaymentCountdown, mountPaymentCountdown } from './payment-countdown.js';
 import { formatMoney } from './cart.js';
-import { getLastDraftSummary, mountResumeBanner, refreshDraftSummary } from './booking-draft.js';
+import {
+  getLastDraftSummary,
+  mountResumeBanner,
+  refreshDraftSummary,
+  bindDraftVisibilityRefresh,
+} from './booking-draft.js';
 import { initSourceGuard } from './source-guard.js';
 
 function mountDashboardPage() {
@@ -647,6 +652,7 @@ async function init() {
     initChatWidget();
     initTabs();
     mountResumeBanner('resumeBanner', refreshDraftSummary() ?? getLastDraftSummary());
+    bindDraftVisibilityRefresh();
     const hash = location.hash.replace('#', '');
     showPanel(['book', 'bookings', 'gallery', 'profile'].includes(hash) ? hash : 'book', {
       updateHash: false,

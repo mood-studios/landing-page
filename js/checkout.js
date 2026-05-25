@@ -15,6 +15,7 @@ import {
   bindCheckoutFormDraftSave,
   flushBookingDraftSave,
   saveCheckoutPaymentDraft,
+  bindDraftVisibilityRefresh,
 } from './booking-draft.js';
 import {
   bindFullNameInput,
@@ -447,6 +448,7 @@ async function init() {
   initNav();
   fillContactForm();
   bindCheckoutFormDraftSave();
+  bindDraftVisibilityRefresh();
   loadCheckoutCart();
   window.addEventListener('beforeunload', () => {
     flushBookingDraftSave();

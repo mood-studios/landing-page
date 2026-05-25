@@ -180,6 +180,58 @@ export function resetDraftSession() {
   lastDraftSummary = null;
 }
 
+/**
+ * Re-pull the latest draft from the server and apply it if it's newer than
+ * the local copy. Triggered when the tab regains focus so changes made on the
+ * mobile app (or another browser tab) appear without re-logging in.
+ */
+export async function refreshBookingDraftFromServer() {
+  if (!currentUserId) return null;
+  let serverDraft = null;
+  try {
+    const res = await bookingDraftApi.get();
+    serverDraft = res.data;
+  } catch {
+    return null;
+  }
+
+  const localTs = getDraftLocalTimestamp(currentUserId);
+  const serverTs = serverDraft?.updatedAt ? new Date(serverDraft.updatedAt).getTime() : 0;
+
+  if (!hasDraftContent(serverDraft) && !serverDraft?.paymentSession) {
+    if (lastDraftSummary) {
+      lastDraftSummary = null;
+      renderResumeBanner();
+    }
+    return null;
+  }
+
+  const localCart = getCart();
+  const localHasContent =
+    localCart.length > 0 || (readCheckoutPayment()?.bookingIds?.length || 0) > 0;
+
+  if (serverTs >= localTs || !localHasContent) {
+    applyDraft(serverDraft);
+    lastDraftSummary = summarizeDraft(serverDraft);
+    renderResumeBanner();
+    return lastDraftSummary;
+  }
+  return lastDraftSummary;
+}
+
+let visibilityHandlerBound = false;
+export function bindDraftVisibilityRefresh() {
+  if (visibilityHandlerBound || typeof document === 'undefined') return;
+  visibilityHandlerBound = true;
+  const trigger = () => {
+    if (document.visibilityState === 'visible') {
+      refreshBookingDraftFromServer();
+    }
+  };
+  document.addEventListener('visibilitychange', trigger);
+  window.addEventListener('focus', () => refreshBookingDraftFromServer());
+}
+
 export function getLastDraftSummary() {
   return lastDraftSummary;
 }
